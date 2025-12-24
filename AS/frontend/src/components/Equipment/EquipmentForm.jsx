@@ -25,9 +25,11 @@ import {
   useColorModeValue,
   Container,
 } from '@chakra-ui/react';
-import { FiUpload, FiX, FiCamera, FiDollarSign, FiTag } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { FiUpload, FiX, FiCamera, FiDollarSign, FiTag, FiTrash2 } from 'react-icons/fi';
 
 const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
     manufacturer: '',
@@ -298,9 +300,24 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
                  </VStack>
               </Box>
 
-              <Button type="submit" colorScheme="teal" size="lg" w="full" isLoading={isLoading} h="50px" fontSize="lg">
-                Publish Listing
-              </Button>
+              <VStack spacing={3} w="full">
+                <Button type="submit" colorScheme="teal" size="lg" w="full" isLoading={isLoading} h="50px" fontSize="lg">
+                  Publish Listing
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  colorScheme="red" 
+                  w="full" 
+                  leftIcon={<FiTrash2 />} 
+                  onClick={() => {
+                    if (window.confirm('Are you sure you want to discard this listing? All unsaved changes will be lost.')) {
+                      navigate('/equipment');
+                    }
+                  }}
+                >
+                  Discard
+                </Button>
+              </VStack>
             </VStack>
           </GridItem>
         </Grid>

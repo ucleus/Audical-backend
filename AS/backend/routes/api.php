@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\EquipmentController;
 use App\Http\Controllers\Api\InquiryController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
     // Equipment routes
     Route::get('/equipment', [EquipmentController::class, 'index']);
@@ -40,6 +43,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/inquiries', [InquiryController::class, 'index']);
         Route::get('/inquiries/{inquiry}', [InquiryController::class, 'show']);
         Route::put('/inquiries/{inquiry}', [InquiryController::class, 'update']);
+        
+        // Order Management
+        Route::get('/orders', [OrderController::class, 'index']);
+        Route::post('/orders', [OrderController::class, 'store']);
+        Route::put('/orders/{order}', [OrderController::class, 'update']);
     });
 
     // User Management routes (Super Admin only)

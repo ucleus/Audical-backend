@@ -6,6 +6,8 @@ import UsersList from './pages/UsersList';
 import EquipmentList from './pages/EquipmentList';
 import CreateEquipment from './pages/CreateEquipment';
 import InquiriesList from './pages/InquiriesList';
+import OrdersList from './pages/OrdersList';
+import Dashboard from './pages/Dashboard';
 import Layout from './components/Layout';
 import { Spinner, Center, Heading, Text } from '@chakra-ui/react';
 
@@ -25,16 +27,6 @@ const ProtectedRoute = ({ children }) => {
   }
 
   return children;
-};
-
-const Dashboard = () => {
-  const { user } = useAuth();
-  return (
-    <Layout>
-      <Heading mb={4}>Dashboard</Heading>
-      <Text>Welcome back, {user?.name}!</Text>
-    </Layout>
-  );
 };
 
 function App() {
@@ -66,6 +58,11 @@ function App() {
           <Route path="/inquiries" element={
             <ProtectedRoute>
               <InquiriesList />
+            </ProtectedRoute>
+          } />
+          <Route path="/orders" element={
+            <ProtectedRoute>
+              <OrdersList />
             </ProtectedRoute>
           } />
         </Routes>

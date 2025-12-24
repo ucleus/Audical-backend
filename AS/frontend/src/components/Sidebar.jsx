@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Flex, Icon, Text, VStack } from '@chakra-ui/react';
-import { FiHome, FiUsers, FiBox, FiSettings, FiMessageSquare } from 'react-icons/fi';
+import { FiHome, FiUsers, FiBox, FiSettings, FiMessageSquare, FiShoppingCart } from 'react-icons/fi';
 import { NavLink } from 'react-router-dom';
 
 const SidebarItem = ({ icon, children, to }) => {
@@ -55,6 +55,7 @@ const Sidebar = () => {
         <SidebarItem icon={FiHome} to="/">Dashboard</SidebarItem>
         <SidebarItem icon={FiBox} to="/equipment">Equipment</SidebarItem>
         <SidebarItem icon={FiMessageSquare} to="/inquiries">Inquiries</SidebarItem>
+        <SidebarItem icon={FiShoppingCart} to="/orders">Orders</SidebarItem>
         <SidebarItem icon={FiUsers} to="/users">Users</SidebarItem>
         <SidebarItem icon={FiSettings} to="/settings">Settings</SidebarItem>
       </VStack>

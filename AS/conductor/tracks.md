@@ -18,3 +18,6 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ## [ ] Track: Refine Equipment Listing UI (FB/eBay style) and add Industry Specific fields.
 *Link: [./conductor/tracks/frontend_equipment_refinement_20251224/](./conductor/tracks/frontend_equipment_refinement_20251224/)*
+
+## [ ] Track: Backend Enhancements (Dashboard, Orders System, Shipping, Stripe).
+*Link: [./conductor/tracks/backend_enhancements_20251224/](./conductor/tracks/backend_enhancements_20251224/)*

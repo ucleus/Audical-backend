@@ -19,8 +19,13 @@ import {
   IconButton,
   Image,
   Flex,
+  Grid,
+  GridItem,
+  Badge,
+  useColorModeValue,
+  Container,
 } from '@chakra-ui/react';
-import { FiUpload, FiX } from 'react-icons/fi';
+import { FiUpload, FiX, FiCamera, FiDollarSign, FiTag } from 'react-icons/fi';
 
 const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
   const [formData, setFormData] = useState({
@@ -84,169 +89,223 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
     onSubmit(data);
   };
 
+  const bgColor = useColorModeValue('white', 'bg.800');
+  const borderColor = useColorModeValue('gray.200', 'gray.700');
+
   return (
-    <form onSubmit={handleSubmit}>
-      <VStack spacing={8} align="stretch">
-        <Box>
-          <Heading size="sm" mb={4} color="brand.400" textTransform="uppercase">General Information</Heading>
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-            <FormControl isRequired>
-              <FormLabel>Title</FormLabel>
-              <Input name="title" value={formData.title} onChange={handleChange} placeholder="e.g. Philips Affiniti 70 Ultrasound" />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Equipment Type</FormLabel>
-              <Select name="type" value={formData.type} onChange={handleChange} placeholder="Select Type">
-                <option value="Diagnostic">Diagnostic</option>
-                <option value="Surgical">Surgical</option>
-                <option value="Therapeutic">Therapeutic</option>
-                <option value="Dental">Dental</option>
-                <option value="Imaging">Imaging</option>
-              </Select>
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Manufacturer</FormLabel>
-              <Input name="manufacturer" value={formData.manufacturer} onChange={handleChange} />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Model Number</FormLabel>
-              <Input name="model_number" value={formData.model_number} onChange={handleChange} />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Year of Manufacture</FormLabel>
-              <Input name="year_of_manufacture" type="number" value={formData.year_of_manufacture} onChange={handleChange} />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Condition</FormLabel>
-              <Select name="condition" value={formData.condition} onChange={handleChange} placeholder="Select Condition">
-                <option value="New">New</option>
-                <option value="Used - Like New">Used - Like New</option>
-                <option value="Used - Good">Used - Good</option>
-                <option value="Used - Fair">Used - Fair</option>
-              </Select>
-            </FormControl>
-          </SimpleGrid>
-        </Box>
-
-        <Divider borderColor="gray.700" />
-
-        <Box>
-          <Heading size="sm" mb={4} color="brand.400" textTransform="uppercase">Pricing & Logistics</Heading>
-          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
-            <FormControl isRequired>
-              <FormLabel>Price ($)</FormLabel>
-              <Input name="price" type="number" step="0.01" value={formData.price} onChange={handleChange} />
-            </FormControl>
-            <FormControl pt={8}>
-              <Checkbox name="is_negotiable" isChecked={formData.is_negotiable} onChange={handleChange}>
-                Negotiable
-              </Checkbox>
-            </FormControl>
-            <FormControl>
-              <FormLabel>Stock Quantity</FormLabel>
-              <NumberInput min={0} value={formData.stock_quantity}>
-                <NumberInputField name="stock_quantity" onChange={handleChange} />
-              </NumberInput>
-            </FormControl>
-            <FormControl gridColumn={{ md: "span 2" }}>
-              <FormLabel>Item Location</FormLabel>
-              <Input name="location" value={formData.location} onChange={handleChange} placeholder="City, Country" />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Status</FormLabel>
-              <Select name="status" value={formData.status} onChange={handleChange}>
-                <option value="active">Active</option>
-                <option value="draft">Draft</option>
-              </Select>
-            </FormControl>
-          </SimpleGrid>
-        </Box>
-
-        <Divider borderColor="gray.700" />
-
-        <Box>
-          <Heading size="sm" mb={4} color="brand.400" textTransform="uppercase">Compliance & Support</Heading>
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-            <HStack spacing={8} pt={4}>
-              <Checkbox name="fda_approved" isChecked={formData.fda_approved} onChange={handleChange}>FDA Approved</Checkbox>
-              <Checkbox name="ce_marked" isChecked={formData.ce_marked} onChange={handleChange}>CE Marked</Checkbox>
-            </HStack>
-            <FormControl>
-              <FormLabel>Last Calibration Date</FormLabel>
-              <Input name="last_calibration_date" type="date" value={formData.last_calibration_date} onChange={handleChange} />
-            </FormControl>
-            <FormControl gridColumn={{ md: "span 2" }}>
-              <FormLabel>Warranty Details</FormLabel>
-              <Textarea name="warranty_details" value={formData.warranty_details} onChange={handleChange} placeholder="Details about warranty coverage..." />
-            </FormControl>
-          </SimpleGrid>
-        </Box>
-
-        <Divider borderColor="gray.700" />
-
-        <Box>
-          <Heading size="sm" mb={4} color="brand.400" textTransform="uppercase">Images</Heading>
-          <FormControl>
-            <FormLabel>Upload Equipment Photos</FormLabel>
-            <Box
-              border="2px dashed"
-              borderColor="gray.600"
-              borderRadius="lg"
-              p={6}
-              textAlign="center"
-              cursor="pointer"
-              _hover={{ borderColor: 'brand.500' }}
-              onClick={() => document.getElementById('image-upload').click()}
-            >
-              <FiUpload style={{ margin: '0 auto', fontSize: '24px', color: '#0EA5A4' }} />
-              <Text mt={2}>Click to upload or drag and drop</Text>
-              <Text fontSize="xs" color="gray.500">PNG, JPG up to 10MB</Text>
-              <input
-                id="image-upload"
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleImageChange}
-                style={{ display: 'none' }}
-              />
-            </Box>
-          </FormControl>
-
-          {imagePreviews.length > 0 && (
-            <SimpleGrid columns={{ base: 2, md: 4, lg: 6 }} spacing={4} mt={4}>
-              {imagePreviews.map((src, index) => (
-                <Box key={index} pos="relative" borderRadius="md" overflow="hidden" h="100px" border="1px" borderColor="gray.700">
-                  <Image src={src} objectFit="cover" w="100%" h="100%" />
-                  <IconButton
-                    size="xs"
-                    icon={<FiX />}
-                    pos="absolute"
-                    top={1}
-                    right={1}
-                    colorScheme="red"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeImage(index);
-                    }}
+    <Container maxW="container.xl" p={0}>
+      <form onSubmit={handleSubmit}>
+        <Grid templateColumns={{ base: '1fr', lg: '1fr 350px' }} gap={6}>
+          
+          {/* Main Content Column */}
+          <GridItem>
+             {/* 1. Media Upload (Hero Section) */}
+            <Box bg={bgColor} p={6} borderRadius="xl" borderWidth="1px" borderColor={borderColor} mb={6} position="relative">
+              <Heading size="md" mb={4}>Photos</Heading>
+              <Text fontSize="sm" color="gray.500" mb={4}>Add photos to attract more buyers. Show all angles and details.</Text>
+              
+              <Flex direction="column" gap={4}>
+                 <Box
+                  border="2px dashed"
+                  borderColor="gray.500"
+                  borderRadius="xl"
+                  bg="whiteAlpha.50"
+                  h="200px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  cursor="pointer"
+                  _hover={{ borderColor: 'brand.500', bg: 'whiteAlpha.100' }}
+                  onClick={() => document.getElementById('image-upload').click()}
+                  transition="all 0.2s"
+                >
+                  <VStack spacing={2}>
+                    <Box p={3} bg="brand.500" borderRadius="full">
+                       <FiCamera size={24} color="white" />
+                    </Box>
+                    <Text fontWeight="bold">Add Photos</Text>
+                    <Text fontSize="xs" color="gray.400">or drag and drop</Text>
+                  </VStack>
+                  <input
+                    id="image-upload"
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ display: 'none' }}
                   />
-                  {index === 0 && (
-                    <Badge pos="absolute" bottom={0} left={0} w="100%" textAlign="center" colorScheme="teal" fontSize="2xs">
-                      Primary
-                    </Badge>
-                  )}
                 </Box>
-              ))}
-            </SimpleGrid>
-          )}
-        </Box>
 
-        <Box pt={4}>
-          <Button type="submit" colorScheme="teal" size="lg" width="full" isLoading={isLoading}>
-            Save Equipment
-          </Button>
-        </Box>
-      </VStack>
-    </form>
+                {/* Preview Grid */}
+                {imagePreviews.length > 0 && (
+                  <SimpleGrid columns={{ base: 2, sm: 3, md: 4 }} spacing={4}>
+                    {imagePreviews.map((src, index) => (
+                      <Box key={index} pos="relative" borderRadius="lg" overflow="hidden" pt="100%" bg="black" border="1px" borderColor="gray.600">
+                        <Image src={src} objectFit="cover" pos="absolute" top={0} left={0} w="100%" h="100%" />
+                        <IconButton
+                          size="xs"
+                          icon={<FiX />}
+                          pos="absolute"
+                          top={1}
+                          right={1}
+                          colorScheme="red"
+                          borderRadius="full"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeImage(index);
+                          }}
+                        />
+                        {index === 0 && (
+                          <Badge pos="absolute" bottom={0} left={0} w="100%" textAlign="center" colorScheme="teal" fontSize="xs" py={1}>
+                            Cover Photo
+                          </Badge>
+                        )}
+                      </Box>
+                    ))}
+                  </SimpleGrid>
+                )}
+              </Flex>
+            </Box>
+
+            {/* 2. Key Details */}
+            <Box bg={bgColor} p={6} borderRadius="xl" borderWidth="1px" borderColor={borderColor} mb={6}>
+              <Heading size="md" mb={4}>Item Details</Heading>
+              <VStack spacing={4}>
+                <FormControl isRequired>
+                   <FormLabel>Title</FormLabel>
+                   <Input name="title" value={formData.title} onChange={handleChange} placeholder="e.g. Interacoustics AC40 Clinical Audiometer" size="lg" fontSize="md" />
+                </FormControl>
+
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} w="full">
+                    <FormControl isRequired>
+                      <FormLabel>Equipment Type</FormLabel>
+                      <Select name="type" value={formData.type} onChange={handleChange} placeholder="Select Type">
+                        <option value="Audiometer">Audiometer</option>
+                        <option value="Tympanometer">Tympanometer</option>
+                        <option value="Sound Booth">Sound Booth</option>
+                        <option value="Real Ear Measurement (REM)">Real Ear Measurement (REM)</option>
+                        <option value="Otoscope">Otoscope</option>
+                        <option value="OAE System">OAE System</option>
+                        <option value="Hearing Aid Analyzer">Hearing Aid Analyzer</option>
+                        <option value="VNG/ENG System">VNG/ENG System</option>
+                        <option value="Other">Other</option>
+                      </Select>
+                    </FormControl>
+                    <FormControl isRequired>
+                      <FormLabel>Condition</FormLabel>
+                      <Select name="condition" value={formData.condition} onChange={handleChange} placeholder="Select Condition">
+                        <option value="New">New</option>
+                        <option value="Used - Like New">Used - Like New</option>
+                        <option value="Used - Good">Used - Good</option>
+                        <option value="Used - Fair">Used - Fair</option>
+                        <option value="For Parts">For Parts</option>
+                      </Select>
+                    </FormControl>
+                </SimpleGrid>
+
+                <FormControl isRequired>
+                  <FormLabel>Description</FormLabel>
+                  <Textarea 
+                    name="description" 
+                    value={formData.description} 
+                    onChange={handleChange} 
+                    placeholder="Describe the item in detail (specs, included accessories, known issues)..." 
+                    rows={6} 
+                  />
+                </FormControl>
+              </VStack>
+            </Box>
+
+            {/* 3. Technical Specs */}
+            <Box bg={bgColor} p={6} borderRadius="xl" borderWidth="1px" borderColor={borderColor}>
+              <Heading size="md" mb={4}>Technical Specifications</Heading>
+              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                 <FormControl>
+                    <FormLabel>Manufacturer</FormLabel>
+                    <Input name="manufacturer" value={formData.manufacturer} onChange={handleChange} />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Model Number</FormLabel>
+                    <Input name="model_number" value={formData.model_number} onChange={handleChange} />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Year of Manufacture</FormLabel>
+                    <Input name="year_of_manufacture" type="number" value={formData.year_of_manufacture} onChange={handleChange} />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Last Calibration</FormLabel>
+                    <Input name="last_calibration_date" type="date" value={formData.last_calibration_date} onChange={handleChange} />
+                  </FormControl>
+                  <Box gridColumn={{ md: "span 2" }} pt={2}>
+                    <HStack spacing={6}>
+                        <Checkbox name="fda_approved" isChecked={formData.fda_approved} onChange={handleChange}>FDA Approved</Checkbox>
+                        <Checkbox name="ce_marked" isChecked={formData.ce_marked} onChange={handleChange}>CE Marked</Checkbox>
+                    </HStack>
+                  </Box>
+              </SimpleGrid>
+            </Box>
+          </GridItem>
+
+          {/* Sidebar Column (Pricing & Logistics) */}
+          <GridItem>
+            <VStack spacing={6} position="sticky" top="100px">
+              <Box bg={bgColor} p={6} borderRadius="xl" borderWidth="1px" borderColor={borderColor} w="full" boxShadow="sm">
+                <Heading size="sm" mb={4} color="gray.400" textTransform="uppercase" letterSpacing="wide">Pricing</Heading>
+                <FormControl isRequired mb={4}>
+                  <FormLabel>Price</FormLabel>
+                   <Box position="relative">
+                      <Input 
+                        name="price" 
+                        type="number" 
+                        step="0.01" 
+                        value={formData.price} 
+                        onChange={handleChange} 
+                        pl={8} 
+                        placeholder="0.00" 
+                        size="lg"
+                        fontWeight="bold"
+                      />
+                      <Box position="absolute" left={3} top={3}>
+                        <FiDollarSign color="gray" />
+                      </Box>
+                   </Box>
+                </FormControl>
+                <Checkbox name="is_negotiable" isChecked={formData.is_negotiable} onChange={handleChange} mb={2}>
+                  Price is negotiable
+                </Checkbox>
+              </Box>
+
+              <Box bg={bgColor} p={6} borderRadius="xl" borderWidth="1px" borderColor={borderColor} w="full">
+                 <Heading size="sm" mb={4} color="gray.400" textTransform="uppercase" letterSpacing="wide">Inventory</Heading>
+                 <VStack spacing={4}>
+                    <FormControl>
+                      <FormLabel>Stock Quantity</FormLabel>
+                      <NumberInput min={1} value={formData.stock_quantity} w="full">
+                        <NumberInputField name="stock_quantity" onChange={handleChange} />
+                      </NumberInput>
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Location</FormLabel>
+                      <Input name="location" value={formData.location} onChange={handleChange} placeholder="City, State" />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Status</FormLabel>
+                       <Select name="status" value={formData.status} onChange={handleChange}>
+                        <option value="active">Active (Visible)</option>
+                        <option value="draft">Draft (Hidden)</option>
+                      </Select>
+                    </FormControl>
+                 </VStack>
+              </Box>
+
+              <Button type="submit" colorScheme="teal" size="lg" w="full" isLoading={isLoading} h="50px" fontSize="lg">
+                Publish Listing
+              </Button>
+            </VStack>
+          </GridItem>
+        </Grid>
+      </form>
+    </Container>
   );
 };
 

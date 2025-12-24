@@ -15,3 +15,6 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ## [ ] Track: Implement Inquiry & Lead Management system (Backend Resource, Public Submission Form, Admin Inbox).
 *Link: [./conductor/tracks/fullstack_inquiry_mgmt_20251224/](./conductor/tracks/fullstack_inquiry_mgmt_20251224/)*
+
+## [ ] Track: Refine Equipment Listing UI (FB/eBay style) and add Industry Specific fields.
+*Link: [./conductor/tracks/frontend_equipment_refinement_20251224/](./conductor/tracks/frontend_equipment_refinement_20251224/)*

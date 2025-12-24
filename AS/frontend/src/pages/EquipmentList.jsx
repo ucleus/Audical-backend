@@ -36,11 +36,73 @@ import {
 import { FiPlus, FiSearch, FiEye, FiEdit2, FiCheckCircle, FiInfo } from 'react-icons/fi';
 import api from '../lib/api';
 import Layout from '../components/Layout';
-
 import { Link } from 'react-router-dom';
 
+const InfoRow = ({ label, value, isBoolean }) => (
+  <Box>
+    <Text fontSize="xs" color="gray.500" fontWeight="bold" textTransform="uppercase">{label}</Text>
+    {isBoolean ? (
+      <Flex align="center" mt={1}>
+        {value ? <FiCheckCircle color="green" /> : <Text fontSize="sm" color="gray.500">No</Text>}
+      </Flex>
+    ) : (
+      <Text fontSize="sm" color="white">{value || '-'}</Text>
+    )}
+  </Box>
+);
+
 const EquipmentList = () => {
-  // ... existing states ...
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [selectedItem, setSelectedItem] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
+
+  const fetchEquipment = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = {};
+      if (search) params.search = search;
+      if (statusFilter) params.status = statusFilter;
+
+      const response = await api.get('/equipment', { params });
+      setItems(response.data.data);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to load equipment.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [search, statusFilter, toast]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchEquipment();
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [fetchEquipment]);
+
+  const handleViewDetails = (item) => {
+    setSelectedItem(item);
+    onOpen();
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'active': return 'green';
+      case 'draft': return 'gray';
+      case 'sold': return 'red';
+      default: return 'blue';
+    }
+  };
 
   return (
     <Layout>
@@ -62,12 +124,14 @@ const EquipmentList = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               bg="bg.900"
+              color="white"
             />
           </InputGroup>
           <Select 
             placeholder="All Statuses" 
             maxW="200px" 
             bg="bg.900"
+            color="white"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -105,7 +169,7 @@ const EquipmentList = () => {
                          {item.images?.[0] ? (
                            <Image src={`http://localhost:8000/storage/${item.images[0].file_path}`} objectFit="cover" />
                          ) : (
-                           <Flex align="center" justify="center" h="100%"><Text fontSize="xs">NA</Text></Flex>
+                           <Flex align="center" justify="center" h="100%"><Text fontSize="xs" color="gray.400">NA</Text></Flex>
                          )}
                       </Box>
                       <Box>
@@ -217,12 +281,6 @@ const EquipmentList = () => {
       </Modal>
     </Layout>
   );
-};
-
-// Internal Icon fix
-const Icon = ({ as, ...props }) => {
-  const Comp = as;
-  return <Box as={Comp} {...props} />;
 };
 
 export default EquipmentList;

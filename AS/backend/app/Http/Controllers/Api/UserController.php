@@ -5,12 +5,21 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    /**
+     * Get all roles.
+     */
+    public function getRoles(): JsonResponse
+    {
+        return response()->json(Role::all());
+    }
+
     /**
      * Display a listing of the resource.
      */

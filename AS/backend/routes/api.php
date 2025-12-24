@@ -43,5 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // User Management routes (Super Admin only)
-    Route::middleware('role:super-admin')->apiResource('users', UserController::class);
+    Route::middleware('role:super-admin')->group(function () {
+        Route::get('/roles', [UserController::class, 'getRoles']);
+        Route::apiResource('users', UserController::class);
+    });
 });

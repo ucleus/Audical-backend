@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   VStack,
   FormControl,
@@ -24,12 +24,22 @@ import {
   Badge,
   useColorModeValue,
   Container,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { FiUpload, FiX, FiCamera, FiDollarSign, FiTag, FiTrash2 } from 'react-icons/fi';
 
 const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef();
+
   const [formData, setFormData] = useState({
     title: '',
     manufacturer: '',
@@ -89,6 +99,10 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
     });
 
     onSubmit(data);
+  };
+
+  const handleDiscard = () => {
+    navigate('/equipment');
   };
 
   const bgColor = useColorModeValue('white', 'bg.800');
@@ -309,11 +323,7 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
                   colorScheme="red" 
                   w="full" 
                   leftIcon={<FiTrash2 />} 
-                  onClick={() => {
-                    if (window.confirm('Are you sure you want to discard this listing? All unsaved changes will be lost.')) {
-                      navigate('/equipment');
-                    }
-                  }}
+                  onClick={onOpen}
                 >
                   Discard
                 </Button>
@@ -322,6 +332,33 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
           </GridItem>
         </Grid>
       </form>
+
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent bg="bg.800" color="white" border="1px" borderColor="gray.700">
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Discard Changes
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure you want to discard this listing? All unsaved changes will be lost.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose} variant="ghost">
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDiscard} ml={3}>
+                Discard
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Container>
   );
 };

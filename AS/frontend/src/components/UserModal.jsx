@@ -20,7 +20,7 @@ import {
   Center,
 } from '@chakra-ui/react';
 import { FiCamera, FiX } from 'react-icons/fi';
-import api from '../lib/api';
+import api, { BACKEND_URL } from '../lib/api';
 
 const UserModal = ({ isOpen, onClose, user = null, roles = [], onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -41,7 +41,7 @@ const UserModal = ({ isOpen, onClose, user = null, roles = [], onSuccess }) => {
         email: user.email,
         role_id: user.role_id,
       });
-      setPhotoPreview(user.profile_photo_path ? `http://localhost:8000/storage/${user.profile_photo_path}` : null);
+      setPhotoPreview(user.profile_photo_path ? `${BACKEND_URL}/storage/${user.profile_photo_path}` : null);
     } else {
       setFormData({
         name: '',
@@ -88,8 +88,6 @@ const UserModal = ({ isOpen, onClose, user = null, roles = [], onSuccess }) => {
 
     try {
       if (user) {
-        // Laravel doesn't handle multipart/form-data well with PUT by default
-        // So we spoof the method
         data.append('_method', 'PUT');
         await api.post(`/users/${user.id}`, data, {
           headers: { 'Content-Type': 'multipart/form-data' }

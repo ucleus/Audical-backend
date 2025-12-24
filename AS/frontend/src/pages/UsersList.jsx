@@ -20,7 +20,7 @@ import {
   HStack,
 } from '@chakra-ui/react';
 import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
-import api from '../lib/api';
+import api, { BACKEND_URL } from '../lib/api';
 import Layout from '../components/Layout';
 import UserModal from '../components/UserModal';
 
@@ -120,7 +120,7 @@ const UsersList = () => {
                       <Avatar 
                         size="sm" 
                         name={user.name} 
-                        src={user.profile_photo_path ? `http://localhost:8000/storage/${user.profile_photo_path}` : null} 
+                        src={user.profile_photo_path ? `${BACKEND_URL}/storage/${user.profile_photo_path}` : null} 
                       />
                       <Text color="white" fontWeight="medium">{user.name}</Text>
                     </HStack>

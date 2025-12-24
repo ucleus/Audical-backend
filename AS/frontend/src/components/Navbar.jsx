@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { FiMenu, FiChevronDown, FiLogOut } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import { BACKEND_URL } from '../lib/api';
 
 const Navbar = ({ onOpen, ...rest }) => {
   const { user, logout } = useAuth();
@@ -57,7 +58,7 @@ const Navbar = ({ onOpen, ...rest }) => {
                 <Avatar
                   size={'sm'}
                   name={user?.name}
-                  src={user?.profile_photo_path ? `http://localhost:8000/storage/${user.profile_photo_path}` : null}
+                  src={user?.profile_photo_path ? `${BACKEND_URL}/storage/${user.profile_photo_path}` : null}
                   bg="brand.500"
                 />
                 <VStack

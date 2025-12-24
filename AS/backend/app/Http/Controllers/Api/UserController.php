@@ -9,6 +9,9 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class UserController extends Controller
 {
@@ -34,7 +37,13 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
-        $user = User::create($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('profile_photo')) {
+            $data['profile_photo_path'] = $this->uploadAndResizeImage($request->file('profile_photo'));
+        }
+
+        $user = User::create($data);
         
         return response()->json([
             'message' => 'User created successfully.',
@@ -55,7 +64,17 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
-        $user->update($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('profile_photo')) {
+            // Delete old photo
+            if ($user->profile_photo_path) {
+                Storage::disk('public')->delete($user->profile_photo_path);
+            }
+            $data['profile_photo_path'] = $this->uploadAndResizeImage($request->file('profile_photo'));
+        }
+
+        $user->update($data);
 
         return response()->json([
             'message' => 'User updated successfully.',
@@ -72,8 +91,36 @@ class UserController extends Controller
             return response()->json(['message' => 'You cannot delete yourself.'], 403);
         }
 
+        if ($user->profile_photo_path) {
+            Storage::disk('public')->delete($user->profile_photo_path);
+        }
+
         $user->delete();
 
         return response()->json(['message' => 'User deleted successfully.']);
+    }
+
+    /**
+     * Helper to upload and resize image.
+     */
+    private function uploadAndResizeImage($file): string
+    {
+        $manager = new ImageManager(new Driver());
+        $image = $manager->read($file);
+        
+        // Industry standard profile size: 400x400
+        $image->cover(400, 400);
+        
+        $filename = 'profile-photos/' . uniqid() . '.jpg';
+        $path = storage_path('app/public/' . $filename);
+        
+        // Ensure directory exists
+        if (!file_exists(dirname($path))) {
+            mkdir(dirname($path), 0755, true);
+        }
+        
+        $image->save($path);
+        
+        return $filename;
     }
 }

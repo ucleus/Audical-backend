@@ -57,6 +57,7 @@ const Navbar = ({ onOpen, ...rest }) => {
                 <Avatar
                   size={'sm'}
                   name={user?.name}
+                  src={user?.profile_photo_path ? `http://localhost:8000/storage/${user.profile_photo_path}` : null}
                   bg="brand.500"
                 />
                 <VStack

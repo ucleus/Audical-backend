@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -14,7 +14,12 @@ import {
   Select,
   VStack,
   useToast,
+  Avatar,
+  Box,
+  IconButton,
+  Center,
 } from '@chakra-ui/react';
+import { FiCamera, FiX } from 'react-icons/fi';
 import api from '../lib/api';
 
 const UserModal = ({ isOpen, onClose, user = null, roles = [], onSuccess }) => {
@@ -23,7 +28,10 @@ const UserModal = ({ isOpen, onClose, user = null, roles = [], onSuccess }) => {
     email: '',
     role_id: '',
   });
+  const [photo, setPhoto] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = useRef();
   const toast = useToast();
 
   useEffect(() => {
@@ -33,13 +41,16 @@ const UserModal = ({ isOpen, onClose, user = null, roles = [], onSuccess }) => {
         email: user.email,
         role_id: user.role_id,
       });
+      setPhotoPreview(user.profile_photo_path ? `http://localhost:8000/storage/${user.profile_photo_path}` : null);
     } else {
       setFormData({
         name: '',
         email: '',
         role_id: '',
       });
+      setPhotoPreview(null);
     }
+    setPhoto(null);
   }, [user, isOpen]);
 
   const handleChange = (e) => {
@@ -49,16 +60,45 @@ const UserModal = ({ isOpen, onClose, user = null, roles = [], onSuccess }) => {
     });
   };
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(file);
+      setPhotoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const removePhoto = () => {
+    setPhoto(null);
+    setPhotoPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
+    const data = new FormData();
+    data.append('name', formData.name);
+    data.append('email', formData.email);
+    data.append('role_id', formData.role_id);
+    if (photo) {
+      data.append('profile_photo', photo);
+    }
+
     try {
       if (user) {
-        await api.put(`/users/${user.id}`, formData);
+        // Laravel doesn't handle multipart/form-data well with PUT by default
+        // So we spoof the method
+        data.append('_method', 'PUT');
+        await api.post(`/users/${user.id}`, data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         toast({ status: 'success', title: 'User updated successfully' });
       } else {
-        await api.post('/users', formData);
+        await api.post('/users', data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         toast({ status: 'success', title: 'User created successfully' });
       }
       onSuccess();
@@ -82,7 +122,48 @@ const UserModal = ({ isOpen, onClose, user = null, roles = [], onSuccess }) => {
         <ModalCloseButton />
         <form onSubmit={handleSubmit}>
           <ModalBody pb={6}>
-            <VStack spacing={4}>
+            <VStack spacing={6}>
+              <Center position="relative">
+                <Avatar
+                  size="xl"
+                  src={photoPreview}
+                  name={formData.name}
+                  border="2px"
+                  borderColor="brand.500"
+                />
+                <IconButton
+                  size="xs"
+                  rounded="full"
+                  position="absolute"
+                  bottom="0"
+                  right="0"
+                  colorScheme="brand"
+                  icon={<FiCamera />}
+                  onClick={() => fileInputRef.current.click()}
+                  aria-label="Upload Photo"
+                />
+                {photoPreview && (
+                  <IconButton
+                    size="xs"
+                    rounded="full"
+                    position="absolute"
+                    top="0"
+                    right="-2"
+                    colorScheme="red"
+                    icon={<FiX />}
+                    onClick={removePhoto}
+                    aria-label="Remove Photo"
+                  />
+                )}
+                <input
+                  type="file"
+                  hidden
+                  ref={fileInputRef}
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                />
+              </Center>
+
               <FormControl isRequired>
                 <FormLabel>Name</FormLabel>
                 <Input name="name" value={formData.name} onChange={handleChange} placeholder="Full Name" />

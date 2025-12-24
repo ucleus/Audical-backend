@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Audical Services — Equipment Catalog</title>
+  <meta name="description" content="Audical Services: Professional hearing-aid testing equipment for sale with global shipping.">
+  <link rel="stylesheet" href="./assets/css/styles.css">
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <h1>Audical Services</h1>
+      </div>
+      <nav class="navlinks" aria-label="Primary">
+        <a href="#shop">Products</a>
+        <a href="#tutorials">Tutorials</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="cta">
+        <button class="btn ghost icon-btn" id="themeToggle" aria-pressed="false" aria-label="Switch to light mode" title="Theme">
+          <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="btn primary" id="startShopping">Shop Now</button>
+        <button class="btn hamburger" id="openMenu" aria-label="Open menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <div class="container">
+        <span class="badge">Medical-grade hearing equipment • Global shipping • Professional support</span>
+        <div class="grid">
+          <div>
+            <h2 class="title">Professional Hearing‑Aid Testing Equipment — <span style="background:linear-gradient(135deg,var(--primary),var(--primary-2)); -webkit-background-clip:text; background-clip:text; color:transparent">Available for Purchase</span></h2>
+            <p class="subtitle">Audical Services provides calibrated systems, sound booths, and accessories with global shipping. Tutorials hosted on YouTube keep your team trained and compliant.</p>
+            <div class="hero-cta">
+              <button class="btn primary" onclick="scrollToId('shop')">Browse Products</button>
+              <button class="btn ghost" onclick="scrollToId('contact')">Contact Sales</button>
+            </div>
+            <div class="pillbar">
+              <span class="pill">Calibrated to national standards</span>
+              <span class="pill">Global shipping</span>
+              <span class="pill">Professional installation support</span>
+              <span class="pill">YouTube tutorials</span>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <h3 style="margin-bottom:8px">Quick Facts</h3>
+              <div class="statbar">
+                <div class="stat"><h3>30+</h3><p>Products</p></div>
+                <div class="stat"><h3>50+</h3><p>Countries</p></div>
+                <div class="stat"><h3>24/7</h3><p>Support</p></div>
+                <div class="stat"><h3>100%</h3><p>Calibrated</p></div>
+              </div>
+              <p class="callout">Complete equipment catalog - contact us for pricing and shipping quotes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCT CATALOG -->
+    <section id="shop" class="container">
+      <h2 class="section-title">Equipment Catalog</h2>
+
+      <div class="filterbar" aria-label="Filters">
+        <div class="chips" id="chipRow">
+          <button class="chip active" data-cat="all">All</button>
+          <button class="chip" data-cat="audiometers">Audiometers</button>
+          <button class="chip" data-cat="tympanometers">Tympanometers</button>
+          <button class="chip" data-cat="booths">Sound Booths</button>
+          <button class="chip" data-cat="accessories">Accessories</button>
+        </div>
+        <div class="search">
+          <input type="text" id="searchInput" placeholder="Search products…" aria-label="Search products" />
+        </div>
+      </div>
+
+      <div class="grid products" id="productGrid" aria-live="polite"></div>
+    </section>
+
+    <!-- TUTORIALS -->
+    <section id="tutorials" class="container">
+      <h2 class="section-title">Tutorials & Training</h2>
+      <p class="muted">Product walkthroughs, calibration guidance, and quick-start videos.</p>
+      <div class="tutorials-embed" aria-label="YouTube playlist">
+        <!-- <iframe title="Audical Services Tutorials" src="https://youtu.be/dULlte-boXA?si=ZqhJU7tVxj-sKLYp" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/dULlte-boXA?si=ZqhJU7tVxj-sKLYp" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> 
+      </div>
+    </section>
+
+    <!-- ABOUT / CONTACT -->
+    <section id="about" class="container">
+      <h2 class="section-title">About Audical Services</h2>
+      <p class="muted">We calibrate hearing testing equipment, sell clinical systems, and support clinic relocations and sound booth installs worldwide.</p>
+    </section>
+
+    <section id="contact" class="container">
+      <h2 class="section-title">Contact</h2>
+      <div class="card">
+        <p><strong>Website:</strong> <a href="https://audicalservices.com" target="_blank" rel="noopener">audicalservices.com</a></p>
+        <p><strong>Email:</strong> contact@audicalservices.com</p>
+        <p><strong>Phone:</strong> +1 (555) 123-4567</p>
+        <p class="note">Contact us for pricing, shipping quotes, and technical support.</p>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <p>© <span id="year"></span> Audical Services. Professional hearing equipment supplier.</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- PRODUCT DETAIL MODAL -->
+  <div class="overlay" id="productOverlay" role="dialog" aria-modal="true" aria-labelledby="productTitle">
+    <div class="modal">
+      <header><strong id="productTitle">Product</strong></header>
+      <div class="content">
+        <div class="row">
+          <div id="productMedia" class="p-media" style="height:220px; border-radius:12px"></div>
+          <div>
+            <p id="productDesc" class="muted"></p>
+            <div class="pillbar" id="productTags"></div>
+            <div class="spacer"></div>
+            <div class="p-meta">
+              <div>
+                <div class="price" id="productPrice"></div>
+                <div class="lease" id="productLease"></div>
+              </div>
+            </div>
+            <p class="note" style="margin-top:10px">Contact us for pricing, availability, and shipping information.</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <button class="btn primary" onclick="contactSales()">Contact Sales</button>
+        <button class="btn ghost" onclick="closeModal('productOverlay')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./assets/js/main.js"></script>
+</body>
+</html>

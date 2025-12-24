@@ -30,6 +30,7 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique('users')->ignore($this->user),
             ],
             'role_id' => 'sometimes|exists:roles,id',
+            'profile_photo' => 'nullable|image|max:5120',
         ];
     }
 }

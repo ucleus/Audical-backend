@@ -15,7 +15,9 @@ import {
   Spinner,
   Text,
   useDisclosure,
-  IconButton
+  IconButton,
+  Avatar,
+  HStack,
 } from '@chakra-ui/react';
 import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import api from '../lib/api';
@@ -37,7 +39,7 @@ const UsersList = () => {
         api.get('/users'),
         api.get('/roles')
       ]);
-      setUsers(usersRes.data.data || usersRes.data); // Handle pagination or raw array
+      setUsers(usersRes.data.data || usersRes.data);
       setRoles(rolesRes.data);
     } catch (error) {
       toast({
@@ -104,7 +106,7 @@ const UsersList = () => {
           <Table variant="simple">
             <Thead bg="gray.800">
               <Tr>
-                <Th color="gray.400">Name</Th>
+                <Th color="gray.400">User</Th>
                 <Th color="gray.400">Email</Th>
                 <Th color="gray.400">Role</Th>
                 <Th color="gray.400">Actions</Th>
@@ -113,7 +115,16 @@ const UsersList = () => {
             <Tbody>
               {users.map((user) => (
                 <Tr key={user.id} _hover={{ bg: 'gray.700' }}>
-                  <Td color="white" fontWeight="medium">{user.name}</Td>
+                  <Td>
+                    <HStack>
+                      <Avatar 
+                        size="sm" 
+                        name={user.name} 
+                        src={user.profile_photo_path ? `http://localhost:8000/storage/${user.profile_photo_path}` : null} 
+                      />
+                      <Text color="white" fontWeight="medium">{user.name}</Text>
+                    </HStack>
+                  </Td>
                   <Td color="gray.300">{user.email}</Td>
                   <Td>
                     <Badge 
@@ -148,7 +159,7 @@ const UsersList = () => {
               ))}
               {users.length === 0 && (
                 <Tr>
-                  <Td colSpan={5} textAlign="center" py={8} color="gray.400">
+                  <Td colSpan={4} textAlign="center" py={8} color="gray.400">
                     No users found.
                   </Td>
                 </Tr>

@@ -12,3 +12,6 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ## [x] Track: Implement the Equipment Management UI, including inventory listing, CRUD forms, and image upload handling.
 *Link: [./conductor/tracks/frontend_equipment_mgmt_20251222/](./conductor/tracks/frontend_equipment_mgmt_20251222/)*
+
+## [ ] Track: Implement Inquiry & Lead Management system (Backend Resource, Public Submission Form, Admin Inbox).
+*Link: [./conductor/tracks/fullstack_inquiry_mgmt_20251224/](./conductor/tracks/fullstack_inquiry_mgmt_20251224/)*

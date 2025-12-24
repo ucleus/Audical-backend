@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EquipmentController;
+use App\Http\Controllers\Api\InquiryController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
+Route::post('/inquiries', [InquiryController::class, 'store']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -33,6 +35,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/equipment', [EquipmentController::class, 'store']);
         Route::put('/equipment/{equipment}', [EquipmentController::class, 'update']);
         Route::delete('/equipment/{equipment}', [EquipmentController::class, 'destroy']);
+        
+        // Inquiry Management
+        Route::get('/inquiries', [InquiryController::class, 'index']);
+        Route::get('/inquiries/{inquiry}', [InquiryController::class, 'show']);
+        Route::put('/inquiries/{inquiry}', [InquiryController::class, 'update']);
     });
 
     // User Management routes (Super Admin only)

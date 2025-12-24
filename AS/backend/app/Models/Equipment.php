@@ -61,11 +61,11 @@ class Equipment extends Model
 
     public function images(): HasMany
     {
-        return $this->hasMany(EquipmentImage::class)->orderBy('order');
+        return $this->hasMany(EquipmentImage::class);
     }
 
-    public function primaryImage()
+    public function inquiries(): HasMany
     {
-        return $this->hasOne(EquipmentImage::class)->where('is_primary', true);
+        return $this->hasMany(Inquiry::class);
     }
 }

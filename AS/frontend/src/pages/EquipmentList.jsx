@@ -33,9 +33,10 @@ import {
   Tag,
   VStack,
 } from '@chakra-ui/react';
-import { FiPlus, FiSearch, FiEye, FiEdit2, FiCheckCircle, FiInfo } from 'react-icons/fi';
+import { FiPlus, FiSearch, FiEye, FiEdit2, FiCheckCircle, FiInfo, FiMessageSquare } from 'react-icons/fi';
 import api from '../lib/api';
 import Layout from '../components/Layout';
+import InquiryModal from '../components/InquiryModal';
 import { Link } from 'react-router-dom';
 
 const InfoRow = ({ label, value, isBoolean }) => (
@@ -57,7 +58,17 @@ const EquipmentList = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
+  
+  // Equipment Details Modal
   const { isOpen, onOpen, onClose } = useDisclosure();
+  
+  // Inquiry Modal
+  const { 
+    isOpen: isInquiryOpen, 
+    onOpen: onInquiryOpen, 
+    onClose: onInquiryClose 
+  } = useDisclosure();
+
   const toast = useToast();
 
   const fetchEquipment = useCallback(async () => {
@@ -93,6 +104,15 @@ const EquipmentList = () => {
   const handleViewDetails = (item) => {
     setSelectedItem(item);
     onOpen();
+  };
+
+  const handleInquire = () => {
+    // Keep the details modal open or close it? 
+    // Usually better to close details or stack them. 
+    // Let's stack them (Chakra handles nested modals well if needed, or we close details).
+    // For simplicity: Close details, open inquiry.
+    onClose(); 
+    onInquiryOpen();
   };
 
   const getStatusColor = (status) => {
@@ -275,10 +295,25 @@ const EquipmentList = () => {
           </ModalBody>
           <ModalFooter borderTopWidth="1px" borderColor="gray.700">
             <Button variant="ghost" mr={3} onClick={onClose}>Close</Button>
-            <Button colorScheme="blue">Edit Item</Button>
+            <Button colorScheme="blue" mr={3}>Edit Item</Button>
+            <Button 
+              leftIcon={<FiMessageSquare />} 
+              colorScheme="teal" 
+              variant="solid" 
+              onClick={handleInquire}
+            >
+              Inquire
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Inquiry Modal */}
+      <InquiryModal 
+        isOpen={isInquiryOpen} 
+        onClose={onInquiryClose} 
+        equipment={selectedItem} 
+      />
     </Layout>
   );
 };

@@ -8,13 +8,13 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Backend Resource' (Protocol in workflow.md)
 
 ## Phase 2: Frontend - Inquiry Submission
-- [ ] Task: Update `EquipmentList` modal to include an "Inquire" button.
-- [ ] Task: Create `InquiryModal` form component.
-- [ ] Task: Integrate API to submit inquiries for specific equipment.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Submission' (Protocol in workflow.md)
+- [x] Task: Update `EquipmentList` modal to include an "Inquire" button.
+- [x] Task: Create `InquiryModal` form component.
+- [x] Task: Integrate API to submit inquiries for specific equipment.
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Submission' (Protocol in workflow.md)
 
 ## Phase 3: Frontend - Admin Inbox
-- [ ] Task: Create `InquiryList` page for admins.
-- [ ] Task: Implement status management (New, Read, Responded).
-- [ ] Task: Add "Inquiries" link to Sidebar.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Admin Inbox' (Protocol in workflow.md)
+- [x] Task: Create `InquiryList` page for admins.
+- [x] Task: Implement status management (New, Read, Responded).
+- [x] Task: Add "Inquiries" link to Sidebar.
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Admin Inbox' (Protocol in workflow.md)

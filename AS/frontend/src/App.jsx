@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage';
 import UsersList from './pages/UsersList';
 import EquipmentList from './pages/EquipmentList';
 import CreateEquipment from './pages/CreateEquipment';
+import InquiriesList from './pages/InquiriesList';
 import Layout from './components/Layout';
 import { Spinner, Center, Heading, Text } from '@chakra-ui/react';
 
@@ -60,6 +61,11 @@ function App() {
           <Route path="/equipment/create" element={
             <ProtectedRoute>
               <CreateEquipment />
+            </ProtectedRoute>
+          } />
+          <Route path="/inquiries" element={
+            <ProtectedRoute>
+              <InquiriesList />
             </ProtectedRoute>
           } />
         </Routes>

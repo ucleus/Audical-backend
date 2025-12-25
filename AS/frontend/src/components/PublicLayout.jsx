@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { useDisclosure, Badge } from '@chakra-ui/react';
+import { useDisclosure, Badge, useColorMode } from '@chakra-ui/react';
 import CartDrawer from './CartDrawer';
 import '../assets/mockup.css';
 
@@ -11,15 +11,19 @@ const PublicLayout = ({ children }) => {
   const { cartCount } = useCart();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { setColorMode } = useColorMode();
+
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('audical_theme') || 
            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   });
 
   useEffect(() => {
+    // Sync both our custom data-theme and Chakra's internal state
     document.documentElement.setAttribute('data-theme', theme);
+    setColorMode(theme);
     localStorage.setItem('audical_theme', theme);
-  }, [theme]);
+  }, [theme, setColorMode]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
@@ -46,29 +50,18 @@ const PublicLayout = ({ children }) => {
                 aria-label={theme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
                 onClick={toggleTheme}
             >
-               {/* Sun Icon (Visible in Dark Mode) */}
                <svg className="icon icon-sun" viewBox="0 0 24 24" fill="none" strokeWidth="2" style={{display: theme === 'dark' ? 'block' : 'none'}}>
                  <circle cx="12" cy="12" r="4"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
                </svg>
-               {/* Moon Icon (Visible in Light Mode) */}
                <svg className="icon icon-moon" viewBox="0 0 24 24" fill="none" strokeWidth="2" style={{display: theme === 'light' ? 'block' : 'none'}}>
                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                </svg>
             </button>
 
-            {/* Cart Button */}
             <button className="btn ghost" onClick={onOpen} style={{position:'relative', padding:'8px 12px'}}>
                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
                {cartCount > 0 && (
-                 <Badge 
-                    position="absolute" 
-                    top="-2px" 
-                    right="-2px" 
-                    colorScheme="teal" 
-                    borderRadius="full" 
-                    fontSize="10px" 
-                    px={1}
-                 >
+                 <Badge position="absolute" top="-2px" right="-2px" colorScheme="teal" borderRadius="full" fontSize="10px" px={1}>
                    {cartCount}
                  </Badge>
                )}

@@ -571,6 +571,20 @@ select {
   --accent: #0b74b8;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
+
+/* Force Chakra UI elements to follow our light mode text color */
+[data-theme="light"] .chakra-heading,
+[data-theme="light"] .chakra-text {
+  color: var(--text) !important;
+}
+
+[data-theme="light"] .chakra-stat__label {
+  color: var(--muted) !important;
+}
+
+[data-theme="light"] .chakra-stat__number {
+  color: var(--text) !important;
+}
 [data-theme="light"] body {
   background: radial-gradient(
       1200px 600px at 10% -20%,

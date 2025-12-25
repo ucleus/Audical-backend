@@ -90,7 +90,12 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
     
     Object.keys(formData).forEach(key => {
       if (formData[key] !== null && formData[key] !== undefined) {
-        data.append(key, formData[key]);
+        // Explicitly handle booleans for FormData
+        if (typeof formData[key] === 'boolean') {
+           data.append(key, formData[key] ? '1' : '0');
+        } else {
+           data.append(key, formData[key]);
+        }
       }
     });
 

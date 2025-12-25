@@ -1,85 +1,57 @@
-import React from 'react';
-import { Box, Flex, Text, Button, Container, HStack, Stack, Link as ChakraLink, useColorModeValue } from '@chakra-ui/react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import '../assets/mockup.css';
 
 const PublicLayout = ({ children }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const bg = useColorModeValue('bg.900', 'gray.900');
+
+  useEffect(() => {
+    // Theme toggle logic or initialization if needed
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }, []);
 
   return (
-    <Box minH="100vh" bg={bg}>
-      {/* Navbar */}
-      <Box borderBottom="1px" borderColor="gray.800" bg="bg.900" position="sticky" top={0} zIndex={100}>
-        <Container maxW="container.xl">
-          <Flex h={20} alignItems="center" justifyContent="space-between">
-            <Text 
-              fontSize="2xl" 
-              fontWeight="bold" 
-              fontFamily="monospace" 
-              color="brand.500" 
-              cursor="pointer"
-              onClick={() => navigate('/')}
-            >
-              Audical
-            </Text>
+    <>
+      <header>
+        <div className="container nav">
+          <div className="brand">
+            <div className="logo" aria-hidden="true"></div>
+            <h1>Audical Services</h1>
+          </div>
+          <nav className="navlinks" aria-label="Primary">
+            <a href="#shop">Products</a>
+            <a href="#tutorials">Tutorials</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+          </nav>
+          <div className="cta">
+            {/* Theme Toggle Placeholder - simplified for React */}
+            <button className="btn ghost icon-btn" id="themeToggle" aria-label="Switch theme">
+               <svg className="icon icon-sun" viewBox="0 0 24 24" fill="none" strokeWidth="2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            </button>
 
-            <HStack spacing={8} display={{ base: 'none', md: 'flex' }}>
-              <ChakraLink as={Link} to="/" color="gray.300" _hover={{ color: 'white' }}>Buy</ChakraLink>
-              <ChakraLink color="gray.300" _hover={{ color: 'white' }}>Sell</ChakraLink>
-              <ChakraLink color="gray.300" _hover={{ color: 'white' }}>About</ChakraLink>
-              <ChakraLink color="gray.300" _hover={{ color: 'white' }}>Contact</ChakraLink>
-            </HStack>
+            {user ? (
+              <button className="btn primary" onClick={() => navigate('/dashboard')}>Dashboard</button>
+            ) : (
+              <button className="btn primary" onClick={() => navigate('/login')}>Sign In</button>
+            )}
+            <button className="btn hamburger" aria-label="Open menu">☰</button>
+          </div>
+        </div>
+      </header>
 
-            <HStack spacing={4}>
-              {user ? (
-                <Button colorScheme="teal" size="sm" onClick={() => navigate('/dashboard')}>
-                  Dashboard
-                </Button>
-              ) : (
-                <Button variant="ghost" colorScheme="teal" size="sm" onClick={() => navigate('/login')}>
-                  Sign In
-                </Button>
-              )}
-              {!user && (
-                 <Button colorScheme="teal" size="sm">Get Started</Button>
-              )}
-            </HStack>
-          </Flex>
-        </Container>
-      </Box>
-
-      {/* Content */}
-      <Box>
+      <main>
         {children}
-      </Box>
+      </main>
 
-      {/* Footer */}
-      <Box bg="gray.900" borderTop="1px" borderColor="gray.800" py={10} mt={20}>
-        <Container maxW="container.xl">
-           <Flex justify="space-between" direction={{ base: 'column', md: 'row' }} gap={8}>
-              <Stack>
-                 <Text fontSize="lg" fontWeight="bold" color="white">Audical</Text>
-                 <Text color="gray.500" fontSize="sm">The marketplace for audiology professionals.</Text>
-              </Stack>
-              <HStack spacing={8} align="start">
-                 <Stack spacing={2}>
-                    <Text fontWeight="bold" color="white">Marketplace</Text>
-                    <ChakraLink color="gray.500" fontSize="sm">Browse Equipment</ChakraLink>
-                    <ChakraLink color="gray.500" fontSize="sm">Sell Equipment</ChakraLink>
-                 </Stack>
-                 <Stack spacing={2}>
-                    <Text fontWeight="bold" color="white">Company</Text>
-                    <ChakraLink color="gray.500" fontSize="sm">About Us</ChakraLink>
-                    <ChakraLink color="gray.500" fontSize="sm">Contact</ChakraLink>
-                 </Stack>
-              </HStack>
-           </Flex>
-           <Text color="gray.600" fontSize="xs" mt={10} textAlign="center">© 2025 Audical. All rights reserved.</Text>
-        </Container>
-      </Box>
-    </Box>
+      <footer>
+        <div className="container">
+          <p>© {new Date().getFullYear()} Audical Services. Professional hearing equipment supplier.</p>
+        </div>
+      </footer>
+    </>
   );
 };
 

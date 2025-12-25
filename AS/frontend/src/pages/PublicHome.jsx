@@ -1,101 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Heading,
-  Text,
-  Container,
-  SimpleGrid,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Button,
-  Image,
-  Badge,
-  VStack,
-  Flex,
-  Icon,
-  Spinner,
-  Center,
-} from '@chakra-ui/react';
-import { FiSearch, FiCheckCircle, FiShield, FiGlobe } from 'react-icons/fi';
 import PublicLayout from '../components/PublicLayout';
 import api, { BACKEND_URL } from '../lib/api';
-import InquiryModal from '../components/InquiryModal';
-
-const CategoryIcon = ({ label, icon }) => (
-  <VStack 
-    cursor="pointer" 
-    transition="all 0.2s" 
-    _hover={{ transform: 'translateY(-5px)' }}
-    spacing={3}
-  >
-    <Flex 
-      w="80px" 
-      h="80px" 
-      borderRadius="full" 
-      bg="gray.800" 
-      align="center" 
-      justify="center"
-      border="1px"
-      borderColor="gray.700"
-      _hover={{ borderColor: 'brand.500', bg: 'gray.700' }}
-    >
-      {/* Placeholder Icon or Real Icon */}
-      <Box w="30px" h="30px" bg="brand.500" borderRadius="md" opacity={0.8} /> 
-    </Flex>
-    <Text color="gray.300" fontSize="sm" fontWeight="medium">{label}</Text>
-  </VStack>
-);
-
-const ProductCard = ({ item, onInquire }) => (
-  <Box 
-    bg="bg.800" 
-    borderRadius="xl" 
-    overflow="hidden" 
-    border="1px" 
-    borderColor="gray.800"
-    transition="all 0.2s"
-    _hover={{ transform: 'translateY(-4px)', shadow: 'xl', borderColor: 'brand.500' }}
-  >
-    <Box h="200px" bg="gray.900" pos="relative" overflow="hidden">
-       {item.images?.[0] ? (
-          <Image 
-            src={`${BACKEND_URL}/storage/${item.images[0].file_path}`} 
-            w="100%" 
-            h="100%" 
-            objectFit="cover" 
-          />
-       ) : (
-          <Center h="100%" color="gray.600">No Image</Center>
-       )}
-       <Badge pos="absolute" top={3} left={3} colorScheme="teal">{item.type}</Badge>
-    </Box>
-    <Box p={5}>
-       <Flex justify="space-between" align="center" mb={2}>
-          <Badge variant="outline" colorScheme={item.condition === 'New' ? 'green' : 'blue'} fontSize="xs">
-            {item.condition}
-          </Badge>
-          <Text fontSize="xs" color="gray.500">{item.location}</Text>
-       </Flex>
-       <Heading size="md" mb={2} color="white" isTruncated>{item.title}</Heading>
-       <Text color="gray.400" fontSize="sm" noOfLines={2} mb={4}>{item.description}</Text>
-       <Flex justify="space-between" align="center">
-          <Text fontSize="xl" fontWeight="bold" color="white">
-            ${parseFloat(item.price).toLocaleString()}
-          </Text>
-          <Button size="sm" colorScheme="teal" variant="outline" onClick={() => onInquire(item)}>
-            Inquire
-          </Button>
-       </Flex>
-    </Box>
-  </Box>
-);
+import InquiryModal from '../components/InquiryModal'; // We can keep using the Chakra modal or replace it. 
+// For "exact match", I should build the HTML modal. But Chakra modal is more accessible and robust in React.
+// I will stick to the HTML structure for the PAGE content as requested.
 
 const PublicHome = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -111,116 +27,188 @@ const PublicHome = () => {
     fetchItems();
   }, []);
 
-  const handleInquire = (item) => {
+  const openModal = (item) => {
     setSelectedItem(item);
     setIsModalOpen(true);
   };
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedItem(null);
+  };
+
+  // Filter Logic
+  const filteredItems = items.filter(item => {
+    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = activeFilter === 'all' || item.type.toLowerCase().includes(activeFilter);
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <PublicLayout>
-      {/* Hero Section */}
-      <Box 
-        bgGradient="linear(to-b, bg.900, gray.900)" 
-        py={{ base: 20, md: 32 }} 
-        textAlign="center"
-        borderBottom="1px"
-        borderColor="gray.800"
-      >
-        <Container maxW="container.lg">
-          <Badge colorScheme="teal" mb={4} px={3} py={1} borderRadius="full">
-            The Trusted Marketplace
-          </Badge>
-          <Heading size="3xl" color="white" mb={6} lineHeight="tight">
-            The Leading Marketplace for <br />
-            <Text as="span" color="brand.400">Pre-owned Audiology Equipment</Text>
-          </Heading>
-          <Text color="gray.400" fontSize="xl" mb={10} maxW="2xl" mx="auto">
-            Buy and sell certified audiometers, tympanometers, and sound booths with confidence. Verified sellers, secure transactions.
-          </Text>
+      {/* HERO */}
+      <section className="hero" id="home">
+        <div className="container">
+          <span className="badge">Medical-grade hearing equipment • Global shipping • Professional support</span>
+          <div className="grid">
+            <div>
+              <h2 className="title">Professional Hearing‑Aid Testing Equipment — <span style={{background:'linear-gradient(135deg,var(--primary),var(--primary-2))', WebkitBackgroundClip:'text', backgroundClip:'text', color:'transparent'}}>Available for Purchase</span></h2>
+              <p className="subtitle">Audical Services provides calibrated systems, sound booths, and accessories with global shipping. Tutorials hosted on YouTube keep your team trained and compliant.</p>
+              <div className="hero-cta">
+                <button className="btn primary" onClick={() => document.getElementById('shop').scrollIntoView({behavior:'smooth'})}>Browse Products</button>
+                <button className="btn ghost" onClick={() => document.getElementById('contact').scrollIntoView({behavior:'smooth'})}>Contact Sales</button>
+              </div>
+              <div className="pillbar">
+                <span className="pill">Calibrated to national standards</span>
+                <span className="pill">Global shipping</span>
+                <span className="pill">Professional installation support</span>
+                <span className="pill">YouTube tutorials</span>
+              </div>
+            </div>
+            <div>
+              <div className="card">
+                <h3 style={{marginBottom:'8px'}}>Quick Facts</h3>
+                <div className="statbar">
+                  <div className="stat"><h3>{items.length}+</h3><p>Products</p></div>
+                  <div className="stat"><h3>50+</h3><p>Countries</p></div>
+                  <div className="stat"><h3>24/7</h3><p>Support</p></div>
+                  <div className="stat"><h3>100%</h3><p>Calibrated</p></div>
+                </div>
+                <p className="callout">Complete equipment catalog - contact us for pricing and shipping quotes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          <Box maxW="xl" mx="auto">
-            <InputGroup size="lg">
-              <InputLeftElement pointerEvents="none">
-                <FiSearch color="gray.500" />
-              </InputLeftElement>
-              <Input 
-                placeholder="Search for equipment (e.g., 'GSI 61', 'Sound Booth')..." 
-                bg="white" 
-                color="gray.900"
-                _placeholder={{ color: 'gray.500' }}
-                border="none"
-                focusBorderColor="brand.500"
-              />
-              <Button h="100%" colorScheme="teal" borderLeftRadius={0} px={8}>
-                Search
-              </Button>
-            </InputGroup>
-          </Box>
-        </Container>
-      </Box>
+      {/* PRODUCT CATALOG */}
+      <section id="shop" className="container">
+        <h2 className="section-title">Equipment Catalog</h2>
 
-      {/* Categories */}
-      <Box py={16} bg="bg.900">
-        <Container maxW="container.xl">
-           <SimpleGrid columns={{ base: 2, md: 4, lg: 6 }} spacing={8} justifyContent="center">
-              <CategoryIcon label="Audiometers" />
-              <CategoryIcon label="Tympanometers" />
-              <CategoryIcon label="REM Systems" />
-              <CategoryIcon label="Sound Booths" />
-              <CategoryIcon label="OAE Systems" />
-              <CategoryIcon label="Screeners" />
-           </SimpleGrid>
-        </Container>
-      </Box>
+        <div className="filterbar" aria-label="Filters">
+          <div className="chips" id="chipRow">
+            <button className={`chip ${activeFilter === 'all' ? 'active' : ''}`} onClick={() => setActiveFilter('all')}>All</button>
+            <button className={`chip ${activeFilter === 'audiometer' ? 'active' : ''}`} onClick={() => setActiveFilter('audiometer')}>Audiometers</button>
+            <button className={`chip ${activeFilter === 'tympanometer' ? 'active' : ''}`} onClick={() => setActiveFilter('tympanometer')}>Tympanometers</button>
+            <button className={`chip ${activeFilter === 'booth' ? 'active' : ''}`} onClick={() => setActiveFilter('booth')}>Sound Booths</button>
+          </div>
+          <div className="search">
+            <input 
+              type="text" 
+              placeholder="Search products…" 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
 
-      {/* Featured Listings */}
-      <Box py={16} bg="gray.900">
-        <Container maxW="container.xl">
-          <Flex justify="space-between" align="center" mb={10}>
-             <Heading size="xl" color="white">Recent Arrivals</Heading>
-             <Button variant="link" colorScheme="teal">View All Inventory</Button>
-          </Flex>
+        <div className="grid products" id="productGrid">
+          {loading && <p className="muted">Loading inventory...</p>}
+          
+          {filteredItems.map(item => (
+            <div className="p-card" key={item.id}>
+              <div className="p-media">
+                 {item.images?.[0] ? (
+                    <img 
+                      src={`${BACKEND_URL}/storage/${item.images[0].file_path}`} 
+                      alt={item.title}
+                      style={{width:'100%', height:'100%', objectFit:'cover'}} 
+                    />
+                 ) : (
+                    // SVG Placeholder from index.html (or similar)
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{color:'var(--muted)'}}><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                 )}
+              </div>
+              <div className="p-body">
+                <div style={{display:'flex', justifyContent:'space-between'}}>
+                   <h3 className="p-title">{item.title}</h3>
+                   <span className="badge" style={{fontSize:'10px', height:'20px', padding:'2px 6px'}}>{item.condition}</span>
+                </div>
+                <p className="p-desc">{item.manufacturer} - {item.model_number}</p>
+                <div className="p-meta">
+                  <div>
+                    <div className="price">${parseFloat(item.price).toLocaleString()}</div>
+                    <div className="lease">{item.status}</div>
+                  </div>
+                  <button className="btn ghost" onClick={() => openModal(item)}>View</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
-          {loading ? (
-             <Center py={20}><Spinner size="xl" color="brand.500" /></Center>
-          ) : (
-             <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8}>
-                {items.map(item => (
-                   <ProductCard key={item.id} item={item} onInquire={handleInquire} />
-                ))}
-             </SimpleGrid>
-          )}
-        </Container>
-      </Box>
+      {/* TUTORIALS */}
+      <section id="tutorials" className="container">
+        <h2 className="section-title">Tutorials & Training</h2>
+        <p className="muted">Product walkthroughs, calibration guidance, and quick-start videos.</p>
+        <div className="tutorials-embed">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/dULlte-boXA?si=ZqhJU7tVxj-sKLYp" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe> 
+        </div>
+      </section>
 
-      {/* Value Props */}
-      <Box py={20} bg="bg.900" borderTop="1px" borderColor="gray.800">
-         <Container maxW="container.xl">
-            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={10}>
-               <VStack align="start" spacing={4} p={6} bg="gray.800" borderRadius="xl">
-                  <Icon as={FiCheckCircle} w={8} h={8} color="brand.400" />
-                  <Heading size="md" color="white">Quality Assured</Heading>
-                  <Text color="gray.400">All equipment is verified for condition and calibration status before listing.</Text>
-               </VStack>
-               <VStack align="start" spacing={4} p={6} bg="gray.800" borderRadius="xl">
-                  <Icon as={FiShield} w={8} h={8} color="brand.400" />
-                  <Heading size="md" color="white">Secure Payments</Heading>
-                  <Text color="gray.400">Transactions are protected with escrow-style payments until delivery is confirmed.</Text>
-               </VStack>
-               <VStack align="start" spacing={4} p={6} bg="gray.800" borderRadius="xl">
-                  <Icon as={FiGlobe} w={8} h={8} color="brand.400" />
-                  <Heading size="md" color="white">Global Shipping</Heading>
-                  <Text color="gray.400">We handle logistics and crating to ensure safe delivery anywhere in the world.</Text>
-               </VStack>
-            </SimpleGrid>
-         </Container>
-      </Box>
+      {/* ABOUT / CONTACT */}
+      <section id="about" className="container">
+        <h2 className="section-title">About Audical Services</h2>
+        <p className="muted">We calibrate hearing testing equipment, sell clinical systems, and support clinic relocations and sound booth installs worldwide.</p>
+      </section>
 
-      <InquiryModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        equipment={selectedItem} 
-      />
+      <section id="contact" className="container">
+        <h2 className="section-title">Contact</h2>
+        <div className="card">
+          <p><strong>Website:</strong> <a href="https://audicalservices.com" target="_blank" rel="noopener noreferrer">audicalservices.com</a></p>
+          <p><strong>Email:</strong> contact@audicalservices.com</p>
+          <p><strong>Phone:</strong> +1 (555) 123-4567</p>
+          <p className="note">Contact us for pricing, shipping quotes, and technical support.</p>
+        </div>
+      </section>
+
+      {/* CUSTOM PRODUCT MODAL (HTML STYLE) */}
+      <div className={`overlay ${isModalOpen ? 'show' : ''}`} onClick={closeModal}>
+        <div className="modal" onClick={e => e.stopPropagation()}>
+          <header><strong>{selectedItem?.title || 'Product'}</strong></header>
+          <div className="content">
+            <div className="row">
+              <div className="p-media" style={{height:'220px', borderRadius:'12px', overflow:'hidden'}}>
+                 {selectedItem?.images?.[0] && (
+                    <img 
+                      src={`${BACKEND_URL}/storage/${selectedItem.images[0].file_path}`} 
+                      alt={selectedItem.title} 
+                      style={{width:'100%', height:'100%', objectFit:'cover'}}
+                    />
+                 )}
+              </div>
+              <div>
+                <p className="muted">{selectedItem?.description}</p>
+                <div className="pillbar" style={{marginTop:'10px'}}>
+                   <span className="pill">{selectedItem?.type}</span>
+                   <span className="pill">{selectedItem?.condition}</span>
+                   {selectedItem?.fda_approved && <span className="pill">FDA Approved</span>}
+                </div>
+                <div className="spacer"></div>
+                <div className="p-meta">
+                  <div>
+                    <div className="price">${selectedItem ? parseFloat(selectedItem.price).toLocaleString() : ''}</div>
+                    <div className="lease">{selectedItem?.stock_quantity > 0 ? 'In Stock' : 'Out of Stock'}</div>
+                  </div>
+                </div>
+                <p className="note" style={{marginTop:'10px'}}>Contact us for pricing, availability, and shipping information.</p>
+              </div>
+            </div>
+          </div>
+          <div className="footer">
+            {/* Reusing InquiryModal logic could be tricky with this HTML structure. 
+                I'll add a simple "Contact Sales" that opens mailto for now, 
+                or I could render the React InquiryModal ON TOP of this. 
+                For "exact match" of index.html behavior (which just calls a JS function), 
+                I'll link to the contact section or mailto. 
+            */}
+            <button className="btn primary" onClick={() => window.location.href = `mailto:sales@audical.com?subject=Inquiry: ${selectedItem?.title}`}>Contact Sales</button>
+            <button className="btn ghost" onClick={closeModal}>Close</button>
+          </div>
+        </div>
+      </div>
+
     </PublicLayout>
   );
 };

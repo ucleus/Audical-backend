@@ -67,9 +67,7 @@ const PublicLayout = ({ children }) => {
                )}
             </button>
 
-            {user ? (
-              <button className="btn primary" onClick={() => navigate('/dashboard')}>Dashboard</button>
-            ) : (
+            {!user && (
               <button className="btn primary" onClick={() => navigate('/login')}>Sign In</button>
             )}
             <button className="btn hamburger" aria-label="Open menu">☰</button>

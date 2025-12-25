@@ -16,11 +16,13 @@ import {
   SimpleGrid,
   Spinner,
   Center,
+  useToast,
 } from '@chakra-ui/react';
-import { FiMessageSquare, FiArrowLeft, FiCheckCircle } from 'react-icons/fi';
+import { FiMessageSquare, FiArrowLeft, FiCheckCircle, FiShoppingCart } from 'react-icons/fi';
 import PublicLayout from '../components/PublicLayout';
 import api, { BACKEND_URL } from '../lib/api';
 import InquiryModal from '../components/InquiryModal';
+import { useCart } from '../context/CartContext';
 
 const PublicProductDetail = () => {
   const { id } = useParams();
@@ -29,6 +31,9 @@ const PublicProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
+  
+  const { addToCart } = useCart();
+  const toast = useToast();
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -43,6 +48,18 @@ const PublicProductDetail = () => {
     };
     fetchItem();
   }, [id]);
+
+  const handleAddToCart = () => {
+    addToCart(item);
+    toast({
+      title: 'Added to Cart',
+      description: `${item.title} has been added to your cart.`,
+      status: 'success',
+      duration: 2000,
+      isClosable: true,
+      position: 'top-right'
+    });
+  };
 
   if (loading) return (
     <PublicLayout>
@@ -122,15 +139,27 @@ const PublicProductDetail = () => {
                     </Text>
 
                     <Box w="full" bg="bg.800" p={6} borderRadius="xl" border="1px" borderColor="gray.700">
-                        <Button 
-                            w="full" 
-                            colorScheme="teal" 
-                            size="lg" 
-                            leftIcon={<FiMessageSquare />} 
-                            onClick={() => setIsModalOpen(true)}
-                        >
-                            Inquire / Purchase
-                        </Button>
+                        <VStack spacing={3}>
+                            <Button 
+                                w="full" 
+                                colorScheme="teal" 
+                                size="lg" 
+                                leftIcon={<FiShoppingCart />} 
+                                onClick={handleAddToCart}
+                            >
+                                Add to Cart
+                            </Button>
+                            <Button 
+                                w="full" 
+                                variant="outline" 
+                                colorScheme="blue"
+                                size="lg" 
+                                leftIcon={<FiMessageSquare />} 
+                                onClick={() => setIsModalOpen(true)}
+                            >
+                                Inquire Details
+                            </Button>
+                        </VStack>
                         <Text fontSize="xs" color="gray.500" mt={3} textAlign="center">
                             Contact us to arrange payment and shipping.
                         </Text>

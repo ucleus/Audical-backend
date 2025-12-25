@@ -37,7 +37,7 @@ import { FiPlus, FiSearch, FiEye, FiEdit2, FiCheckCircle, FiInfo, FiMessageSquar
 import api from '../lib/api';
 import Layout from '../components/Layout';
 import InquiryModal from '../components/InquiryModal';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const InfoRow = ({ label, value, isBoolean }) => (
   <Box>
@@ -70,6 +70,7 @@ const EquipmentList = () => {
   } = useDisclosure();
 
   const toast = useToast();
+  const navigate = useNavigate();
 
   const fetchEquipment = useCallback(async () => {
     setLoading(true);
@@ -106,11 +107,11 @@ const EquipmentList = () => {
     onOpen();
   };
 
+  const handleEdit = (item) => {
+    navigate(`/equipment/edit/${item.id}`);
+  };
+
   const handleInquire = () => {
-    // Keep the details modal open or close it? 
-    // Usually better to close details or stack them. 
-    // Let's stack them (Chakra handles nested modals well if needed, or we close details).
-    // For simplicity: Close details, open inquiry.
     onClose(); 
     onInquiryOpen();
   };
@@ -216,7 +217,7 @@ const EquipmentList = () => {
                   <Td>
                     <HStack spacing={2}>
                       <Button size="sm" leftIcon={<FiEye />} variant="ghost" onClick={() => handleViewDetails(item)}>View</Button>
-                      <Button size="sm" leftIcon={<FiEdit2 />} variant="ghost" colorScheme="blue">Edit</Button>
+                      <Button size="sm" leftIcon={<FiEdit2 />} variant="ghost" colorScheme="blue" onClick={() => handleEdit(item)}>Edit</Button>
                     </HStack>
                   </Td>
                 </Tr>
@@ -295,7 +296,7 @@ const EquipmentList = () => {
           </ModalBody>
           <ModalFooter borderTopWidth="1px" borderColor="gray.700">
             <Button variant="ghost" mr={3} onClick={onClose}>Close</Button>
-            <Button colorScheme="blue" mr={3}>Edit Item</Button>
+            <Button colorScheme="blue" mr={3} onClick={() => handleEdit(selectedItem)}>Edit Item</Button>
             <Button 
               leftIcon={<FiMessageSquare />} 
               colorScheme="teal" 

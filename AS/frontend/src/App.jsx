@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import UsersList from './pages/UsersList';
 import EquipmentList from './pages/EquipmentList';
 import CreateEquipment from './pages/CreateEquipment';
+import EditEquipment from './pages/EditEquipment';
 import InquiriesList from './pages/InquiriesList';
 import OrdersList from './pages/OrdersList';
 import Dashboard from './pages/Dashboard';
@@ -61,6 +62,11 @@ function App() {
             <Route path="/equipment/create" element={
               <ProtectedRoute>
                 <CreateEquipment />
+              </ProtectedRoute>
+            } />
+            <Route path="/equipment/edit/:id" element={
+              <ProtectedRoute>
+                <EditEquipment />
               </ProtectedRoute>
             } />
             <Route path="/inquiries" element={

@@ -12,6 +12,8 @@ import {
   Button,
   Box,
   Heading,
+  Divider,
+  HStack,
   Text,
   IconButton,
   Image,

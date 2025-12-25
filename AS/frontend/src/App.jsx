@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 import LoginPage from './pages/LoginPage';
 import UsersList from './pages/UsersList';
 import EquipmentList from './pages/EquipmentList';
@@ -33,46 +34,48 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <AuthProvider>
-      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<PublicHome />} />
-          <Route path="/product/:id" element={<PublicProductDetail />} />
-          <Route path="/login" element={<LoginPage />} />
+      <CartProvider>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<PublicHome />} />
+            <Route path="/product/:id" element={<PublicProductDetail />} />
+            <Route path="/login" element={<LoginPage />} />
 
-          {/* Protected Admin Routes */}
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/users" element={
-            <ProtectedRoute>
-              <UsersList />
-            </ProtectedRoute>
-          } />
-          <Route path="/equipment" element={
-            <ProtectedRoute>
-              <EquipmentList />
-            </ProtectedRoute>
-          } />
-          <Route path="/equipment/create" element={
-            <ProtectedRoute>
-              <CreateEquipment />
-            </ProtectedRoute>
-          } />
-          <Route path="/inquiries" element={
-            <ProtectedRoute>
-              <InquiriesList />
-            </ProtectedRoute>
-          } />
-          <Route path="/orders" element={
-            <ProtectedRoute>
-              <OrdersList />
-            </ProtectedRoute>
-          } />
-        </Routes>
-      </Router>
+            {/* Protected Admin Routes */}
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/users" element={
+              <ProtectedRoute>
+                <UsersList />
+              </ProtectedRoute>
+            } />
+            <Route path="/equipment" element={
+              <ProtectedRoute>
+                <EquipmentList />
+              </ProtectedRoute>
+            } />
+            <Route path="/equipment/create" element={
+              <ProtectedRoute>
+                <CreateEquipment />
+              </ProtectedRoute>
+            } />
+            <Route path="/inquiries" element={
+              <ProtectedRoute>
+                <InquiriesList />
+              </ProtectedRoute>
+            } />
+            <Route path="/orders" element={
+              <ProtectedRoute>
+                <OrdersList />
+              </ProtectedRoute>
+            } />
+          </Routes>
+        </Router>
+      </CartProvider>
     </AuthProvider>
   );
 }

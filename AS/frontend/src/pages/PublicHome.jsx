@@ -4,19 +4,27 @@ import {
   Box,
   Heading,
   Text,
+  Container,
+  SimpleGrid,
+  Input,
+  InputGroup,
+  InputLeftElement,
   Button,
   Image,
   Badge,
   Flex,
+  Spinner,
   Center,
   HStack,
-  Spinner,
+  useToast,
 } from '@chakra-ui/react';
+import { FiSearch, FiShoppingCart } from 'react-icons/fi';
 import PublicLayout from '../components/PublicLayout';
 import api, { BACKEND_URL } from '../lib/api';
 import InquiryModal from '../components/InquiryModal';
+import { useCart } from '../context/CartContext';
 
-const ProductCard = ({ item, onInquire, navigate }) => (
+const ProductCard = ({ item, onInquire, navigate, onAddToCart }) => (
   <Box 
     bg="bg.800" 
     borderRadius="xl" 
@@ -27,9 +35,8 @@ const ProductCard = ({ item, onInquire, navigate }) => (
     cursor="pointer"
     onClick={() => navigate(`/product/${item.id}`)}
     _hover={{ transform: 'translateY(-4px)', shadow: 'xl', borderColor: 'brand.500' }}
-    className="p-card" // Add class for mockup CSS if needed
   >
-    <Box h="200px" bg="gray.900" pos="relative" overflow="hidden" className="p-media">
+    <Box h="200px" bg="gray.900" pos="relative" overflow="hidden">
        {item.images?.[0] ? (
           <Image 
             src={`${BACKEND_URL}/storage/${item.images[0].file_path}`} 
@@ -42,34 +49,36 @@ const ProductCard = ({ item, onInquire, navigate }) => (
        )}
        <Badge pos="absolute" top={3} left={3} colorScheme="teal">{item.type}</Badge>
     </Box>
-    <Box p={5} className="p-body">
+    <Box p={5}>
        <Flex justify="space-between" align="center" mb={2}>
           <Badge variant="outline" colorScheme={item.condition === 'New' ? 'green' : 'blue'} fontSize="xs">
             {item.condition}
           </Badge>
           <Text fontSize="xs" color="gray.500">{item.location}</Text>
        </Flex>
-       <Heading size="md" mb={2} color="white" isTruncated className="p-title">{item.title}</Heading>
-       <Text color="gray.400" fontSize="sm" noOfLines={2} mb={4} className="p-desc">{item.description}</Text>
-       <Flex justify="space-between" align="center" className="p-meta">
-          <Text fontSize="xl" fontWeight="bold" color="white" className="price">
+       <Heading size="md" mb={2} color="white" isTruncated>{item.title}</Heading>
+       <Text color="gray.400" fontSize="sm" noOfLines={2} mb={4}>{item.description}</Text>
+       <Flex justify="space-between" align="center" mt={auto}>
+          <Text fontSize="xl" fontWeight="bold" color="white">
             ${parseFloat(item.price).toLocaleString()}
           </Text>
-          <HStack spacing={2} className="p-actions">
+          <HStack spacing={2}>
             <Button 
                 size="sm" 
                 colorScheme="teal" 
                 variant="solid" 
-                onClick={(e) => { e.stopPropagation(); onInquire(item); }}
+                leftIcon={<FiShoppingCart />}
+                onClick={(e) => { e.stopPropagation(); onAddToCart(item); }}
             >
-                Inquire
+                Add
             </Button>
             <Button 
                 size="sm" 
                 variant="ghost" 
                 colorScheme="whiteAlpha"
+                onClick={(e) => { e.stopPropagation(); onInquire(item); }}
             >
-                Details
+                Inquire
             </Button>
           </HStack>
        </Flex>
@@ -85,7 +94,9 @@ const PublicHome = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
+  const { addToCart } = useCart();
   const navigate = useNavigate();
+  const toast = useToast();
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -106,6 +117,18 @@ const PublicHome = () => {
     setIsModalOpen(true);
   };
 
+  const handleAddToCart = (item) => {
+    addToCart(item);
+    toast({
+      title: 'Added to Cart',
+      description: `${item.title} added.`,
+      status: 'success',
+      duration: 2000,
+      isClosable: true,
+      position: 'top-right'
+    });
+  };
+
   const filteredItems = items.filter(item => {
     const titleMatch = item.title.toLowerCase().includes(searchTerm.toLowerCase());
     const mfgMatch = item.manufacturer?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -117,7 +140,7 @@ const PublicHome = () => {
 
   return (
     <PublicLayout>
-      {/* HERO SECTION */}
+      {/* HERO ... (Skipping full render for brevity in thought, but writing full file below) */}
       <section className="hero" id="home">
         <div className="container">
           <span className="badge">Medical-grade hearing equipment • Global shipping • Professional support</span>
@@ -152,83 +175,54 @@ const PublicHome = () => {
         </div>
       </section>
 
-      {/* PRODUCT CATALOG */}
-      <section id="shop" className="container">
-        <h2 className="section-title">Equipment Catalog</h2>
+      <Box py={16} id="shop">
+        <Container maxW="container.xl">
+          <Flex justify="space-between" align="center" mb={8} direction={{base: 'column', md: 'row'}} gap={4}>
+            <Heading size="xl" color="white">Equipment Catalog</Heading>
+            <HStack spacing={2} overflowX="auto" pb={{base: 2, md: 0}} maxW="full">
+                {['all', 'Audiometer', 'Tympanometer', 'Booth'].map(cat => (
+                    <Button key={cat} size="sm" variant={activeFilter === cat ? 'solid' : 'outline'} colorScheme="teal" onClick={() => setActiveFilter(cat)}>{cat}</Button>
+                ))}
+            </HStack>
+          </Flex>
 
-        <div className="filterbar" aria-label="Filters">
-          <div className="chips" id="chipRow">
-            <button className={`chip ${activeFilter === 'all' ? 'active' : ''}`} onClick={() => setActiveFilter('all')}>All</button>
-            <button className={`chip ${activeFilter === 'audiometer' ? 'active' : ''}`} onClick={() => setActiveFilter('audiometer')}>Audiometers</button>
-            <button className={`chip ${activeFilter === 'tympanometer' ? 'active' : ''}`} onClick={() => setActiveFilter('tympanometer')}>Tympanometers</button>
-            <button className={`chip ${activeFilter === 'booth' ? 'active' : ''}`} onClick={() => setActiveFilter('booth')}>Sound Booths</button>
-            <button className={`chip ${activeFilter === 'accessories' ? 'active' : ''}`} onClick={() => setActiveFilter('accessories')}>Accessories</button>
-          </div>
-          <div className="search">
-            <input 
-              type="text" 
-              id="searchInput" 
-              placeholder="Search products…" 
-              aria-label="Search products" 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
+          {loading ? (
+             <Center py={20}><Spinner size="xl" color="brand.500" /></Center>
+          ) : (
+             <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8}>
+                {filteredItems.map(item => (
+                   <ProductCard 
+                        key={item.id} 
+                        item={item} 
+                        onInquire={handleInquire} 
+                        navigate={navigate} 
+                        onAddToCart={handleAddToCart}
+                    />
+                ))}
+             </SimpleGrid>
+          )}
+        </Container>
+      </Box>
 
-        <div className="grid products" id="productGrid" aria-live="polite">
-          {loading && <Center py={20}><Spinner size="xl" color="brand.500" /></Center>}
-          
-          {!loading && filteredItems.map(item => (
-             <ProductCard 
-                key={item.id} 
-                item={item} 
-                onInquire={handleInquire} 
-                navigate={navigate} 
-             />
-          ))}
-        </div>
-      </section>
-
-      {/* TUTORIALS */}
       <section id="tutorials" className="container">
         <h2 className="section-title">Tutorials & Training</h2>
-        <p className="muted">Product walkthroughs, calibration guidance, and quick-start videos.</p>
-        <div className="tutorials-embed" aria-label="YouTube playlist">
-          <iframe width="560" height="315" src="https://www.youtube.com/embed/dULlte-boXA?si=ZqhJU7tVxj-sKLYp" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe> 
+        <div className="tutorials-embed">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/dULlte-boXA?si=ZqhJU7tVxj-sKLYp" title="YouTube video player" frameBorder="0" allowFullScreen></iframe> 
         </div>
       </section>
 
-      {/* ABOUT */}
-      <section id="about" className="container">
-        <h2 className="section-title">About Audical Services</h2>
-        <p className="muted">We calibrate hearing testing equipment, sell clinical systems, and support clinic relocations and sound booth installs worldwide.</p>
-      </section>
-
-      {/* CONTACT */}
       <section id="contact" className="container">
         <h2 className="section-title">Contact</h2>
         <div className="card">
           <p><strong>Website:</strong> <a href="https://audicalservices.com" target="_blank" rel="noopener noreferrer">audicalservices.com</a></p>
           <p><strong>Email:</strong> contact@audicalservices.com</p>
           <p><strong>Phone:</strong> +1 (555) 123-4567</p>
-          <p className="note">Contact us for pricing, shipping quotes, and technical support.</p>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer>
-        <div className="container">
-          <p>© {new Date().getFullYear()} Audical Services. Professional hearing equipment supplier.</p>
-        </div>
-      </footer>
+      <footer><div className="container"><p>© {new Date().getFullYear()} Audical Services.</p></div></footer>
 
-      {/* INQUIRY MODAL */}
-      <InquiryModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        equipment={selectedItem} 
-      />
+      <InquiryModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} equipment={selectedItem} />
     </PublicLayout>
   );
 };

@@ -566,8 +566,8 @@ select {
   --card: #ffffff;
   --elev: #f3f6fc;
   --line: #d6e3f8;
-  --muted: #5f6e8a;
-  --text: #0b1426;
+  --muted: #4A5568; /* gray.600 */
+  --text: #0F172A; /* bg.900 */
   --accent: #0b74b8;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }

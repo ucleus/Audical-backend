@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   VStack,
   FormControl,
@@ -8,13 +8,10 @@ import {
   SimpleGrid,
   NumberInput,
   NumberInputField,
-  Textarea,
   Checkbox,
   Button,
   Box,
   Heading,
-  Divider,
-  HStack,
   Text,
   IconButton,
   Image,
@@ -33,7 +30,10 @@ import {
   AlertDialogOverlay,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { FiUpload, FiX, FiCamera, FiDollarSign, FiTag, FiTrash2 } from 'react-icons/fi';
+import { FiUpload, FiX, FiCamera, FiDollarSign, FiTrash2 } from 'react-icons/fi';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import { BACKEND_URL } from '../../lib/api';
 
 const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
   const navigate = useNavigate();
@@ -63,12 +63,24 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
 
+  // Initialize existing images on load
+  useEffect(() => {
+    if (initialData && initialData.images && initialData.images.length > 0) {
+      const existingImages = initialData.images.map(img => `${BACKEND_URL}/storage/${img.file_path}`);
+      setImagePreviews(existingImages);
+    }
+  }, [initialData]);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+  };
+
+  const handleDescriptionChange = (value) => {
+    setFormData(prev => ({ ...prev, description: value }));
   };
 
   const handleImageChange = (e) => {
@@ -80,8 +92,24 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
   };
 
   const removeImage = (index) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
-    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    // If removing an existing image vs a new one, logic might differ.
+    // For simplicity in this form, we just remove from preview/array.
+    // To properly delete existing images from DB, we'd need a separate API call or a "deleted_images" field.
+    // Here, we just handle the visual removal from the current submission context.
+    // If it's a new image (index >= initialData.images.length), remove from 'images'.
+    
+    const initialCount = initialData?.images?.length || 0;
+    
+    if (index < initialCount) {
+        // Removing an existing image - ideally track ID to delete on server
+        // For MVP: Just hide from preview.
+        setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    } else {
+        // Removing a newly added image
+        const newIndex = index - initialCount;
+        setImages(prev => prev.filter((_, i) => i !== newIndex));
+        setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    }
   };
 
   const handleSubmit = (e) => {
@@ -90,7 +118,6 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
     
     Object.keys(formData).forEach(key => {
       if (formData[key] !== null && formData[key] !== undefined) {
-        // Explicitly handle booleans for FormData
         if (typeof formData[key] === 'boolean') {
            data.append(key, formData[key] ? '1' : '0');
         } else {
@@ -113,14 +140,24 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
   const bgColor = useColorModeValue('white', 'bg.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
+  // Custom Quill styles for Dark Mode
+  const quillStyle = {
+    '.ql-toolbar': { borderColor: 'var(--chakra-colors-gray-700)', background: 'var(--chakra-colors-gray-900)', borderTopRadius: '0.375rem' },
+    '.ql-container': { borderColor: 'var(--chakra-colors-gray-700)', background: 'var(--chakra-colors-gray-800)', borderBottomRadius: '0.375rem', minHeight: '150px' },
+    '.ql-editor': { color: 'white', fontSize: '1rem' },
+    '.ql-picker': { color: 'white' },
+    '.ql-stroke': { stroke: 'white' },
+    '.ql-fill': { fill: 'white' },
+  };
+
   return (
     <Container maxW="container.xl" p={0}>
+      <Box sx={quillStyle}>
       <form onSubmit={handleSubmit}>
         <Grid templateColumns={{ base: '1fr', lg: '1fr 350px' }} gap={6}>
           
-          {/* Main Content Column */}
           <GridItem>
-             {/* 1. Media Upload (Hero Section) */}
+            {/* Photos */}
             <Box bg={bgColor} p={6} borderRadius="xl" borderWidth="1px" borderColor={borderColor} mb={6} position="relative">
               <Heading size="md" mb={4}>Photos</Heading>
               <Text fontSize="sm" color="gray.500" mb={4}>Add photos to attract more buyers. Show all angles and details.</Text>
@@ -157,7 +194,6 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
                   />
                 </Box>
 
-                {/* Preview Grid */}
                 {imagePreviews.length > 0 && (
                   <SimpleGrid columns={{ base: 2, sm: 3, md: 4 }} spacing={4}>
                     {imagePreviews.map((src, index) => (
@@ -188,7 +224,7 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
               </Flex>
             </Box>
 
-            {/* 2. Key Details */}
+            {/* Details */}
             <Box bg={bgColor} p={6} borderRadius="xl" borderWidth="1px" borderColor={borderColor} mb={6}>
               <Heading size="md" mb={4}>Item Details</Heading>
               <VStack spacing={4}>
@@ -226,18 +262,17 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
 
                 <FormControl isRequired>
                   <FormLabel>Description</FormLabel>
-                  <Textarea 
-                    name="description" 
+                  <ReactQuill 
+                    theme="snow"
                     value={formData.description} 
-                    onChange={handleChange} 
-                    placeholder="Describe the item in detail (specs, included accessories, known issues)..." 
-                    rows={6} 
+                    onChange={handleDescriptionChange}
+                    style={{ height: '200px', marginBottom: '50px' }}
                   />
                 </FormControl>
               </VStack>
             </Box>
 
-            {/* 3. Technical Specs */}
+            {/* Technical Specs */}
             <Box bg={bgColor} p={6} borderRadius="xl" borderWidth="1px" borderColor={borderColor}>
               <Heading size="md" mb={4}>Technical Specifications</Heading>
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
@@ -267,7 +302,7 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
             </Box>
           </GridItem>
 
-          {/* Sidebar Column (Pricing & Logistics) */}
+          {/* Sidebar */}
           <GridItem>
             <VStack spacing={6} position="sticky" top="100px">
               <Box bg={bgColor} p={6} borderRadius="xl" borderWidth="1px" borderColor={borderColor} w="full" boxShadow="sm">
@@ -321,7 +356,7 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
 
               <VStack spacing={3} w="full">
                 <Button type="submit" colorScheme="teal" size="lg" w="full" isLoading={isLoading} h="50px" fontSize="lg">
-                  Publish Listing
+                  {initialData?.id ? 'Update Listing' : 'Publish Listing'}
                 </Button>
                 <Button 
                   variant="ghost" 
@@ -337,6 +372,7 @@ const EquipmentForm = ({ initialData = {}, onSubmit, isLoading }) => {
           </GridItem>
         </Grid>
       </form>
+      </Box>
 
       <AlertDialog
         isOpen={isOpen}

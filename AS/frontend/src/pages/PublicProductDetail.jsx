@@ -73,6 +73,15 @@ const PublicProductDetail = () => {
     </PublicLayout>
   );
 
+  // Styles for the HTML content coming from the Rich Text Editor
+  const richTextStyles = {
+    'h4': { fontSize: 'xl', fontWeight: 'bold', color: 'white', mb: 3, mt: 6 },
+    'p': { color: 'gray.300', mb: 4, lineHeight: 'tall' },
+    'ul': { ml: 6, mb: 4, color: 'gray.300' },
+    'li': { mb: 2 },
+    'strong': { color: 'white' },
+  };
+
   return (
     <PublicLayout>
       <Container maxW="container.xl" py={10}>
@@ -166,8 +175,11 @@ const PublicProductDetail = () => {
                     </Box>
 
                     <Box>
-                        <Heading size="md" color="white" mb={3}>About this item</Heading>
-                        <Text color="gray.300" whiteSpace="pre-wrap">{item.description}</Text>
+                        <Heading size="md" color="white" mb={3}>Description</Heading>
+                        <Box 
+                            sx={richTextStyles}
+                            dangerouslySetInnerHTML={{ __html: item.description }} 
+                        />
                     </Box>
 
                     <Divider borderColor="gray.700" />

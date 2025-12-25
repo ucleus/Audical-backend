@@ -8,8 +8,8 @@ import CreateEquipment from './pages/CreateEquipment';
 import InquiriesList from './pages/InquiriesList';
 import OrdersList from './pages/OrdersList';
 import Dashboard from './pages/Dashboard';
-import Layout from './components/Layout';
-import { Spinner, Center, Heading, Text } from '@chakra-ui/react';
+import PublicHome from './pages/PublicHome';
+import { Spinner, Center } from '@chakra-ui/react';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -34,8 +34,12 @@ function App() {
     <AuthProvider>
       <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<PublicHome />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={
+
+          {/* Protected Admin Routes */}
+          <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>

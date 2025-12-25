@@ -52,7 +52,7 @@ const Sidebar = () => {
         </Text>
       </Flex>
       <VStack spacing={2} align="stretch">
-        <SidebarItem icon={FiHome} to="/">Dashboard</SidebarItem>
+        <SidebarItem icon={FiHome} to="/dashboard">Dashboard</SidebarItem>
         <SidebarItem icon={FiBox} to="/equipment">Equipment</SidebarItem>
         <SidebarItem icon={FiMessageSquare} to="/inquiries">Inquiries</SidebarItem>
         <SidebarItem icon={FiShoppingCart} to="/orders">Orders</SidebarItem>

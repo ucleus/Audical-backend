@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\EquipmentController;
 use App\Http\Controllers\Api\InquiryController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\PublicEquipmentController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/inquiries', [InquiryController::class, 'store']);
+Route::get('/public/equipment', [PublicEquipmentController::class, 'index']);
+Route::get('/public/equipment/{id}', [PublicEquipmentController::class, 'show']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {

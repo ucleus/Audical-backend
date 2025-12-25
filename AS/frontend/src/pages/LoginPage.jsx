@@ -54,7 +54,7 @@ const LoginPage = () => {
     setIsLoading(true);
     try {
       await verifyOtp(email, otp);
-      navigate('/');
+      navigate('/dashboard');
     } catch (error) {
       toast({
         title: 'Login Failed',

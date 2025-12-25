@@ -156,7 +156,6 @@ const PublicHome = () => {
                 <span className="pill">Calibrated to national standards</span>
                 <span className="pill">Global shipping</span>
                 <span className="pill">Professional installation support</span>
-                <span className="pill">YouTube tutorials</span>
               </div>
             </div>
             <div>
@@ -203,13 +202,6 @@ const PublicHome = () => {
           )}
         </Container>
       </Box>
-
-      <section id="tutorials" className="container">
-        <h2 className="section-title">Tutorials & Training</h2>
-        <div className="tutorials-embed">
-          <iframe width="560" height="315" src="https://www.youtube.com/embed/dULlte-boXA?si=ZqhJU7tVxj-sKLYp" title="YouTube video player" frameBorder="0" allowFullScreen></iframe> 
-        </div>
-      </section>
 
       <section id="contact" className="container">
         <h2 className="section-title">Contact</h2>

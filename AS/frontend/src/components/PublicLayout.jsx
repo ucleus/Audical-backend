@@ -39,7 +39,6 @@ const PublicLayout = ({ children }) => {
           </div>
           <nav className="navlinks" aria-label="Primary">
             <a href="/#shop">Products</a>
-            <a href="/#tutorials">Tutorials</a>
             <a href="/#about">About</a>
             <a href="/#contact">Contact</a>
           </nav>

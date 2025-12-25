@@ -58,7 +58,7 @@ const ProductCard = ({ item, onInquire, navigate, onAddToCart }) => (
        </Flex>
        <Heading size="md" mb={2} color="white" isTruncated>{item.title}</Heading>
        <Text color="gray.400" fontSize="sm" noOfLines={2} mb={4}>{item.description}</Text>
-       <Flex justify="space-between" align="center" mt={auto}>
+       <Flex justify="space-between" align="center" mt="auto">
           <Text fontSize="xl" fontWeight="bold" color="white">
             ${parseFloat(item.price).toLocaleString()}
           </Text>

@@ -9,6 +9,7 @@ import InquiriesList from './pages/InquiriesList';
 import OrdersList from './pages/OrdersList';
 import Dashboard from './pages/Dashboard';
 import PublicHome from './pages/PublicHome';
+import PublicProductDetail from './pages/PublicProductDetail';
 import { Spinner, Center } from '@chakra-ui/react';
 
 const ProtectedRoute = ({ children }) => {
@@ -36,6 +37,7 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<PublicHome />} />
+          <Route path="/product/:id" element={<PublicProductDetail />} />
           <Route path="/login" element={<LoginPage />} />
 
           {/* Protected Admin Routes */}

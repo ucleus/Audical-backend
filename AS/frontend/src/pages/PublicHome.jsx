@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PublicLayout from '../components/PublicLayout';
 import api, { BACKEND_URL } from '../lib/api';
-import InquiryModal from '../components/InquiryModal'; // We can keep using the Chakra modal or replace it. 
-// For "exact match", I should build the HTML modal. But Chakra modal is more accessible and robust in React.
-// I will stick to the HTML structure for the PAGE content as requested.
+import InquiryModal from '../components/InquiryModal';
 
 const PublicHome = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // Quick inquiry modal state (optional, if clicking "Inquire" button directly)
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -27,17 +30,12 @@ const PublicHome = () => {
     fetchItems();
   }, []);
 
-  const openModal = (item) => {
+  const openInquiry = (e, item) => {
+    e.stopPropagation(); // Prevent card click
     setSelectedItem(item);
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedItem(null);
-  };
-
-  // Filter Logic
   const filteredItems = items.filter(item => {
     const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = activeFilter === 'all' || item.type.toLowerCase().includes(activeFilter);
@@ -106,7 +104,12 @@ const PublicHome = () => {
           {loading && <p className="muted">Loading inventory...</p>}
           
           {filteredItems.map(item => (
-            <div className="p-card" key={item.id}>
+            <div 
+                className="p-card" 
+                key={item.id} 
+                onClick={() => navigate(`/product/${item.id}`)}
+                style={{cursor: 'pointer'}}
+            >
               <div className="p-media">
                  {item.images?.[0] ? (
                     <img 
@@ -115,7 +118,6 @@ const PublicHome = () => {
                       style={{width:'100%', height:'100%', objectFit:'cover'}} 
                     />
                  ) : (
-                    // SVG Placeholder from index.html (or similar)
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{color:'var(--muted)'}}><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
                  )}
               </div>
@@ -130,7 +132,10 @@ const PublicHome = () => {
                     <div className="price">${parseFloat(item.price).toLocaleString()}</div>
                     <div className="lease">{item.status}</div>
                   </div>
-                  <button className="btn ghost" onClick={() => openModal(item)}>View</button>
+                  <div style={{display:'flex', gap:'8px'}}>
+                    <button className="btn primary" style={{fontSize:'12px', padding:'6px 12px'}} onClick={(e) => openInquiry(e, item)}>Inquire</button>
+                    <button className="btn ghost" style={{fontSize:'12px', padding:'6px 12px'}}>Details</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -147,68 +152,18 @@ const PublicHome = () => {
         </div>
       </section>
 
-      {/* ABOUT / CONTACT */}
-      <section id="about" className="container">
-        <h2 className="section-title">About Audical Services</h2>
-        <p className="muted">We calibrate hearing testing equipment, sell clinical systems, and support clinic relocations and sound booth installs worldwide.</p>
-      </section>
-
-      <section id="contact" className="container">
-        <h2 className="section-title">Contact</h2>
-        <div className="card">
-          <p><strong>Website:</strong> <a href="https://audicalservices.com" target="_blank" rel="noopener noreferrer">audicalservices.com</a></p>
-          <p><strong>Email:</strong> contact@audicalservices.com</p>
-          <p><strong>Phone:</strong> +1 (555) 123-4567</p>
-          <p className="note">Contact us for pricing, shipping quotes, and technical support.</p>
+      {/* FOOTER etc... */}
+      <footer style={{marginTop:'60px', paddingTop:'40px', borderTop:'1px solid var(--line)'}}>
+        <div className="container">
+          <p className="muted">© {new Date().getFullYear()} Audical Services.</p>
         </div>
-      </section>
+      </footer>
 
-      {/* CUSTOM PRODUCT MODAL (HTML STYLE) */}
-      <div className={`overlay ${isModalOpen ? 'show' : ''}`} onClick={closeModal}>
-        <div className="modal" onClick={e => e.stopPropagation()}>
-          <header><strong>{selectedItem?.title || 'Product'}</strong></header>
-          <div className="content">
-            <div className="row">
-              <div className="p-media" style={{height:'220px', borderRadius:'12px', overflow:'hidden'}}>
-                 {selectedItem?.images?.[0] && (
-                    <img 
-                      src={`${BACKEND_URL}/storage/${selectedItem.images[0].file_path}`} 
-                      alt={selectedItem.title} 
-                      style={{width:'100%', height:'100%', objectFit:'cover'}}
-                    />
-                 )}
-              </div>
-              <div>
-                <p className="muted">{selectedItem?.description}</p>
-                <div className="pillbar" style={{marginTop:'10px'}}>
-                   <span className="pill">{selectedItem?.type}</span>
-                   <span className="pill">{selectedItem?.condition}</span>
-                   {selectedItem?.fda_approved && <span className="pill">FDA Approved</span>}
-                </div>
-                <div className="spacer"></div>
-                <div className="p-meta">
-                  <div>
-                    <div className="price">${selectedItem ? parseFloat(selectedItem.price).toLocaleString() : ''}</div>
-                    <div className="lease">{selectedItem?.stock_quantity > 0 ? 'In Stock' : 'Out of Stock'}</div>
-                  </div>
-                </div>
-                <p className="note" style={{marginTop:'10px'}}>Contact us for pricing, availability, and shipping information.</p>
-              </div>
-            </div>
-          </div>
-          <div className="footer">
-            {/* Reusing InquiryModal logic could be tricky with this HTML structure. 
-                I'll add a simple "Contact Sales" that opens mailto for now, 
-                or I could render the React InquiryModal ON TOP of this. 
-                For "exact match" of index.html behavior (which just calls a JS function), 
-                I'll link to the contact section or mailto. 
-            */}
-            <button className="btn primary" onClick={() => window.location.href = `mailto:sales@audical.com?subject=Inquiry: ${selectedItem?.title}`}>Contact Sales</button>
-            <button className="btn ghost" onClick={closeModal}>Close</button>
-          </div>
-        </div>
-      </div>
-
+      <InquiryModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        equipment={selectedItem} 
+      />
     </PublicLayout>
   );
 };
